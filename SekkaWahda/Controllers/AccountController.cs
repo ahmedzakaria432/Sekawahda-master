@@ -57,8 +57,9 @@ namespace SekkaWahda.Controllers
         [ActionName("AddPhoto")]
         public async Task<HttpResponseMessage> AddPhoto()
         {
+            #region oldMethod
+            /*
 
-            
             var CurrentUserName = RequestContext.Principal.Identity.Name;
             var CurrentUser = context.UserMasters.FirstOrDefault(c => c.UserName == CurrentUserName);
             var ctx = HttpContext.Current;
@@ -106,7 +107,7 @@ namespace SekkaWahda.Controllers
                 context.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.Created, "Photo added successfully");
 
-
+            
             }
             catch (Exception ex)
             {
@@ -114,7 +115,36 @@ namespace SekkaWahda.Controllers
 
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex.InnerException);
             }
-               }
+             */
+            #endregion
+            var CurrentUserName = RequestContext.Principal.Identity.Name;
+            var CurrentUser = context.UserMasters.FirstOrDefault(c => c.UserName == CurrentUserName);
+
+            var httpRequest = HttpContext.Current.Request;
+            var files = httpRequest.Files;
+            if (files.Count < 1)
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you must upload image");
+            foreach (string file in files)
+            {
+                var postedFile = files[file];
+                var filePath = HttpContext.Current.Server.MapPath("~/UsersPhotos/"+ postedFile.FileName);
+                postedFile.SaveAs(filePath);
+                CurrentUser.imagePath = filePath;
+                context.SaveChanges();
+
+            }
+            return Request.CreateResponse(HttpStatusCode.Created,"photo Added successfully");
+
+            //var folderName = Path.Combine("UsersPhotos");
+        
+            //var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            //if (files.Any(f => f.Length == 0))
+            //    throw new Exception();
+
+
+
+        }
+
 
 
         [HttpGet]
