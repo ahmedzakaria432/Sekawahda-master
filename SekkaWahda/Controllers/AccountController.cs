@@ -112,7 +112,7 @@ namespace SekkaWahda.Controllers
             {
 
 
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex.InnerException);
             }
                }
 
