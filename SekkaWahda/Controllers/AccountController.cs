@@ -193,7 +193,7 @@ namespace SekkaWahda.Controllers
                 */
                 #endregion
                 
-                string photosLocationPath = HttpContext.Current.Server.MapPath("~/UsersPhotos");
+                string photosLocationPath = HttpContext.Current.Server.MapPath("~/");
                 if (Directory.Exists(photosLocationPath))
                 {
                     string filename = Path.GetFileName(CurrentUser.imagePath);
@@ -203,10 +203,11 @@ namespace SekkaWahda.Controllers
                     {
                         if (item.Contains(filename))
                         {
-                            string filenameRelative = "~/UsersPhotos" + Path.GetFileName(item);
-                            url = Url.Content(filenameRelative);
-                            url = HttpContext.Current.Request.MapPath(filenameRelative);
-
+                            string filenameRelative = "~/" + Path.GetFileName(item);
+                            filenameRelative= filenameRelative.Replace(HttpContext.Current.Server.MapPath("~/"), "~/").Replace(@"\", "/");
+                            url = filenameRelative;
+                            return Request.CreateResponse(HttpStatusCode.OK, filenameRelative); 
+                            
 
 
                         }
