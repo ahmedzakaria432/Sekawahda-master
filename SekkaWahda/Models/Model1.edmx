@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SECURITY_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Reservation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TravellerId" Type="int" />
+          <Property Name="TripId" Type="int" />
+        </EntityType>
+        <EntityType Name="trip">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FromCity" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ToCity" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="PlaceToMeet" Type="nvarchar" MaxLength="30" />
+          <Property Name="DateOfTrip" Type="datetime" Nullable="false" />
+          <Property Name="TimeOfTrip" Type="time" Precision="7" Nullable="false" />
+          <Property Name="DriverId" Type="int" />
+        </EntityType>
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="UserPassword" Type="varchar" MaxLength="50" />
+          <Property Name="UserRoles" Type="varchar" MaxLength="500" />
+          <Property Name="UserEmailID" Type="varchar" MaxLength="100" />
+          <Property Name="city" Type="nvarchar" MaxLength="20" />
+          <Property Name="SSN" Type="nvarchar" MaxLength="20" />
+          <Property Name="DriverLicense" Type="nvarchar" MaxLength="20" />
+          <Property Name="CarLicense" Type="nvarchar" MaxLength="20" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="50" />
+          <Property Name="imagePath" Type="nvarchar" MaxLength="300" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+          <Property Name="ImageUrl" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK__Reservati__Trave__6383C8BA">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Reservation">
+              <PropertyRef Name="TravellerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__trip__DriverId__60A75C0F">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="trip" Type="Self.trip" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="trip">
+              <PropertyRef Name="DriverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SECURITY_DBModelStoreContainer">
+          <EntitySet Name="Reservation" EntityType="Self.Reservation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="trip" EntityType="Self.trip" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMaster" EntityType="Self.UserMaster" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Reservati__Trave__6383C8BA" Association="Self.FK__Reservati__Trave__6383C8BA">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="Reservation" EntitySet="Reservation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__trip__DriverId__60A75C0F" Association="Self.FK__trip__DriverId__60A75C0F">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="trip" EntitySet="trip" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SECURITY_DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserRoles" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="UserEmailID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="city" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="SSN" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="DriverLicense" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="CarLicense" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="imagePath" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Reservations" Relationship="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA" FromRole="UserMaster" ToRole="Reservation" />
+          <NavigationProperty Name="trips" Relationship="SECURITY_DBModel.FK__trip__DriverId__60A75C0F" FromRole="UserMaster" ToRole="trip" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="SECURITY_DBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
+          <EntitySet Name="Reservations" EntityType="SECURITY_DBModel.Reservation" />
+          <AssociationSet Name="FK__Reservati__Trave__6383C8BA" Association="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="Reservation" EntitySet="Reservations" />
+          </AssociationSet>
+          <EntitySet Name="trips" EntityType="SECURITY_DBModel.trip" />
+          <AssociationSet Name="FK__trip__DriverId__60A75C0F" Association="SECURITY_DBModel.FK__trip__DriverId__60A75C0F">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="trip" EntitySet="trips" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="Reservation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TravellerId" Type="Int32" />
+          <Property Name="TripId" Type="Int32" />
+          <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA" FromRole="Reservation" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK__Reservati__Trave__6383C8BA">
+          <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
+          <End Type="SECURITY_DBModel.Reservation" Role="Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Reservation">
+              <PropertyRef Name="TravellerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="trip">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FromCity" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ToCity" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PlaceToMeet" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfTrip" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TimeOfTrip" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="DriverId" Type="Int32" />
+          <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__trip__DriverId__60A75C0F" FromRole="trip" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK__trip__DriverId__60A75C0F">
+          <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
+          <End Type="SECURITY_DBModel.trip" Role="trip" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="trip">
+              <PropertyRef Name="DriverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SECURITY_DBModelStoreContainer" CdmEntityContainer="SECURITY_DBEntities">
+          <EntitySetMapping Name="UserMasters">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.UserMaster">
+              <MappingFragment StoreEntitySet="UserMaster">
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="imagePath" ColumnName="imagePath" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
+                <ScalarProperty Name="UserRoles" ColumnName="UserRoles" />
+                <ScalarProperty Name="UserEmailID" ColumnName="UserEmailID" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="SSN" ColumnName="SSN" />
+                <ScalarProperty Name="DriverLicense" ColumnName="DriverLicense" />
+                <ScalarProperty Name="CarLicense" ColumnName="CarLicense" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reservations">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.Reservation">
+              <MappingFragment StoreEntitySet="Reservation">
+                <ScalarProperty Name="TripId" ColumnName="TripId" />
+                <ScalarProperty Name="TravellerId" ColumnName="TravellerId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="trips">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.trip">
+              <MappingFragment StoreEntitySet="trip">
+                <ScalarProperty Name="DriverId" ColumnName="DriverId" />
+                <ScalarProperty Name="TimeOfTrip" ColumnName="TimeOfTrip" />
+                <ScalarProperty Name="DateOfTrip" ColumnName="DateOfTrip" />
+                <ScalarProperty Name="PlaceToMeet" ColumnName="PlaceToMeet" />
+                <ScalarProperty Name="ToCity" ColumnName="ToCity" />
+                <ScalarProperty Name="FromCity" ColumnName="FromCity" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

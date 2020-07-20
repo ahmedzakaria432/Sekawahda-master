@@ -1,0 +1,59 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous">
+    </script>
+
+
+
+
+    <button type="button" id="fetchBtn"
+            class="btn btn-primary">
+        Fetch Data
+    </button>
+
+    <div class="imgContainer">
+        <h1>Employee List</h1>
+        <ul id="list"></ul>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js,
+        then Bootstrap JS -->
+    <script>
+    $("#fetchBtn").click(function () {
+  var options = {};
+  options.url = "http://localhost:53215/api/Account/GetUserPhoto";
+  options.type = "GET";
+  options.dataType = "json";
+  options.Authorization="Bearer D7Vf1BfQYZbF2ge92n2UPJ8kUhZlY3cjF-mLcLKmlmFc0kjxDYXSl9p0XQVbcFZ9NS5F77GSdKcjumzeYJ8C-SCnSbbGqLa81daaAw-cxddY1sp5u5QaHZGCCGDL15r-Cpv6GUBofd7tT1khpZeFYuNuoOm2m5BWZ8FSzk8H4uJ36gzH4a3ajso-i6b7DhhSuMDKFfh7oJU1WKiNPU2drvsERiQ1M2dbg3HZVe4-VWDI7BT4abzJlWm2VBNtn1XS83XxBcBY48qxp-EaUy2UFRVcOPqcXSxSrEop-Uj9ImXveZvuAg1Qjj1ipLUcRkvV5IMwL3FCHDYhdJEfGEIVVV5zHZ0fgry5ck6HG7ixNl0";
+  options.contentType = "application/json";
+  options.success = function (results) {
+  $("#imgContainer").empty();
+    for (var i = 0; i < results.length; i++) {
+      $("#imgContainer").append("<img src='" + "api/Account/GetUserPhoto    " + results[i] + "' /> <br />");
+    }
+  };
+        options.error = function (err) { alert(err.statusText); };
+
+        $.ajaxSetup({
+    error: function(xhr){
+        alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+    }
+});
+  $.ajax(options);
+});
+
+    </script>
+
+
