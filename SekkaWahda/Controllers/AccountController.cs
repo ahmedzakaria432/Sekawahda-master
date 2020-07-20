@@ -127,7 +127,7 @@ namespace SekkaWahda.Controllers
             foreach (string file in files)
             {
                 var postedFile = files[file];
-                var filePath = HttpContext.Current.Server.MapPath("~/UsersPhotos/"+ postedFile.FileName);
+                var filePath = HttpContext.Current.Server.MapPath("~/"+ postedFile.FileName);
                 postedFile.SaveAs(filePath);
                 CurrentUser.imagePath = filePath;
                 context.SaveChanges();
