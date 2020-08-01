@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="SECURITY_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Car">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="CarModel" Type="nvarchar" MaxLength="200" />
+          <Property Name="carColor" Type="nvarchar" MaxLength="50" />
+          <Property Name="CarImagePath" Type="nvarchar" MaxLength="1" />
+          <Property Name="UserId" Type="int" />
+        </EntityType>
         <EntityType Name="Reservation">
           <Key>
             <PropertyRef Name="ID" />
@@ -43,6 +53,18 @@
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
           <Property Name="ImageUrl" Type="nvarchar(max)" />
         </EntityType>
+        <Association Name="FK__Car__UserId__48CFD27E">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="Car" Type="Self.Car" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Car">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Reservati__Trave__6383C8BA">
           <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
           <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
@@ -68,9 +90,14 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="SECURITY_DBModelStoreContainer">
+          <EntitySet Name="Car" EntityType="Self.Car" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reservation" EntityType="Self.Reservation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trip" EntityType="Self.trip" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMaster" EntityType="Self.UserMaster" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Car__UserId__48CFD27E" Association="Self.FK__Car__UserId__48CFD27E">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="Car" EntitySet="Car" />
+          </AssociationSet>
           <AssociationSet Name="FK__Reservati__Trave__6383C8BA" Association="Self.FK__Reservati__Trave__6383C8BA">
             <End Role="UserMaster" EntitySet="UserMaster" />
             <End Role="Reservation" EntitySet="Reservation" />
@@ -103,6 +130,7 @@
           <NavigationProperty Name="trips" Relationship="SECURITY_DBModel.FK__trip__DriverId__60A75C0F" FromRole="UserMaster" ToRole="trip" />
           <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="ImageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Cars" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="UserMaster" ToRole="Car" />
         </EntityType>
         <EntityContainer Name="SECURITY_DBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
@@ -115,6 +143,11 @@
           <AssociationSet Name="FK__trip__DriverId__60A75C0F" Association="SECURITY_DBModel.FK__trip__DriverId__60A75C0F">
             <End Role="UserMaster" EntitySet="UserMasters" />
             <End Role="trip" EntitySet="trips" />
+          </AssociationSet>
+          <EntitySet Name="Cars" EntityType="SECURITY_DBModel.Car" />
+          <AssociationSet Name="FK__Car__UserId__48CFD27E" Association="SECURITY_DBModel.FK__Car__UserId__48CFD27E">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="Car" EntitySet="Cars" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Reservation">
@@ -163,6 +196,29 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Car">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="CarModel" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="carColor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CarImagePath" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" />
+          <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="Car" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK__Car__UserId__48CFD27E">
+          <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
+          <End Type="SECURITY_DBModel.Car" Role="Car" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Car">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -206,6 +262,17 @@
                 <ScalarProperty Name="PlaceToMeet" ColumnName="PlaceToMeet" />
                 <ScalarProperty Name="ToCity" ColumnName="ToCity" />
                 <ScalarProperty Name="FromCity" ColumnName="FromCity" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cars">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.Car">
+              <MappingFragment StoreEntitySet="Car">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="CarImagePath" ColumnName="CarImagePath" />
+                <ScalarProperty Name="carColor" ColumnName="carColor" />
+                <ScalarProperty Name="CarModel" ColumnName="CarModel" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

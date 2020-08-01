@@ -140,7 +140,7 @@ namespace SekkaWahda.Controllers
            try{ var message= Request.CreateResponse(HttpStatusCode.BadRequest, "You should enter your car License and your driving License");
             
 
-            message.Headers.Location = new Uri("https://sekkawahda20200201024113.azurewebsites.net/"+ "/api/HomePage/AddLicense/");
+            message.Headers.Location = new Uri("https://seka.azurewebsites.net/" + "/api/HomePage/AddLicense/");
             return message;
 }
 
@@ -151,7 +151,33 @@ catch (Exception ex)
                     }
          
             }
-        
+
+        [ActionName("CheckForLicense")]
+        public HttpResponseMessage CheckForLicense() 
+        {
+            if (ModelState.IsValid) 
+            {
+                try
+                {
+                   
+                    var CurrentUser=context.UserMasters.FirstOrDefault(u=>u.UserName== RequestContext.Principal.Identity.Name);
+                    HttpResponseMessage response;
+                    var resp=(CurrentUser.CarLicense == null || CurrentUser.DriverLicense == null) ?
+                        response=Request.CreateResponse(HttpStatusCode.NotFound,"you should enter your car license and driving license "):
+                        response = Request.CreateResponse(HttpStatusCode.OK, "you have currently entered your car license and driving license ");
+                    return response;
+                }
+                catch (Exception ex)
+                {
+
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                } 
+
+                    
+
+            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest);
+        }
        
         
         [ActionName("AddLicense")]

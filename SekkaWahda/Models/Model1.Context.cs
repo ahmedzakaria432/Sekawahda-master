@@ -38,6 +38,8 @@ public partial class SECURITY_DBEntities : DbContext
 
     public virtual DbSet<trip> trips { get; set; }
 
+    public virtual DbSet<Car> Cars { get; set; }
+
 }
 
 }

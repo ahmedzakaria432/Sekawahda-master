@@ -26,6 +26,8 @@ public partial class UserMaster
 
         this.trips = new HashSet<trip>();
 
+        this.Cars = new HashSet<Car>();
+
     }
 
 
@@ -64,6 +66,10 @@ public partial class UserMaster
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 
     public virtual ICollection<trip> trips { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+    public virtual ICollection<Car> Cars { get; set; }
 
 }
 
