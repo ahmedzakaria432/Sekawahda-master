@@ -13,7 +13,7 @@ namespace SekkaWahda.Models
 
         public string carColor { get; set; }
 
-        public string CarImagePath { get; set; }
+        public string CarUrl { get; set; }
 
         public Nullable<int> UserId { get; set; }
     }
