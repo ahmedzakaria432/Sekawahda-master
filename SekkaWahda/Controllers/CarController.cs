@@ -17,13 +17,14 @@ namespace SekkaWahda.Controllers
     {
         SECURITY_DBEntities context = new SECURITY_DBEntities();
         [HttpPost]
-        public HttpResponseMessage AddCar([FromBody] CarDto car)
+        public HttpResponseMessage AddCar()
         {
             try
             {
+
                 var CarToAdd = new Car();
-                CarToAdd.carColor = car.carColor;
-                CarToAdd.CarModel = car.CarModel;
+                CarToAdd.carColor = HttpContext.Current.Request.Params["carColor"];
+                CarToAdd.CarModel = HttpContext.Current.Request.Params["carModel"];
 
                 CarToAdd.UserId = context.UserMasters.FirstOrDefault(u => u.UserName == (RequestContext.Principal.Identity.Name)).UserID;
 
