@@ -149,15 +149,24 @@ namespace SekkaWahda.Controllers
 
         [HttpGet]
         [ActionName("GetUserPhoto")]
-        public HttpResponseMessage GetUserPhoto() 
+        public HttpResponseMessage GetUserPhoto([FromBody]int? userid) 
         
         {
             string url ="";
+            userid = int.Parse( HttpContext.Current.Request.Form["userid"]);
+            UserMaster CurrentUser;
             try
+            
             {
-                var CurrentUserName = RequestContext.Principal.Identity.Name;
-                var CurrentUser = context.UserMasters.FirstOrDefault(c => c.UserName == CurrentUserName);
-
+                if (userid == null)
+                {
+                    var CurrentUserName = RequestContext.Principal.Identity.Name;
+                    CurrentUser = context.UserMasters.FirstOrDefault(c => c.UserName == CurrentUserName);
+                }
+                else
+                    CurrentUser = context.UserMasters.Find(userid.Value);
+                if (CurrentUser.Equals(null))
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $" photo of the user with id {userid} was not found ");
                 #region test
                 /* 
                 var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -192,7 +201,7 @@ namespace SekkaWahda.Controllers
                 return response;
                 */
                 #endregion
-                
+
                 string photosLocationPath = HttpContext.Current.Server.MapPath("~/");
                 if (Directory.Exists(photosLocationPath))
                 {
@@ -316,10 +325,33 @@ namespace SekkaWahda.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetUser(int id) 
+        public HttpResponseMessage GetUserProfile(int id) 
         {
+            try
+            {
+                var user = context.UserMasters.Find(id);
+                if (user == null)
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "The user wasn't found");
+
+                UserDto userTosend = new UserDto
+                {
+                    city = user.city,
+                    FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber,
+                    UserEmailID = user.UserEmailID,
+                    UserID = user.UserID,
+                    UserName = user.UserName
+                };
+                return Request.CreateResponse(HttpStatusCode.OK, userTosend);
 
 
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+            
         }
 
 
