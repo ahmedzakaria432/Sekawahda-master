@@ -153,7 +153,9 @@ namespace SekkaWahda.Controllers
         
         {
             string url ="";
-            userid = int.Parse( HttpContext.Current.Request.Form["userid"]);
+            var UserIdForm = HttpContext.Current.Request.Form["userid"];
+            if(UserIdForm!=null)
+            userid = int.Parse(UserIdForm);
             UserMaster CurrentUser;
             try
             
