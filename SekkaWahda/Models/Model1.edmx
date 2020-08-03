@@ -9,11 +9,11 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CarModel" Type="nvarchar" MaxLength="200" />
           <Property Name="carColor" Type="nvarchar" MaxLength="50" />
-          <Property Name="CarImagePath" Type="nvarchar" MaxLength="1" />
           <Property Name="UserId" Type="int" />
+          <Property Name="CarImagePath" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -203,7 +203,7 @@
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="CarModel" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="carColor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CarImagePath" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="CarImagePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="UserId" Type="Int32" />
           <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="Car" ToRole="UserMaster" />
         </EntityType>

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="9f2709f0c4dd4cdcba1774f3e2bb2266" Name="Diagram1" ZoomLevel="114">
+      <Diagram DiagramId="9f2709f0c4dd4cdcba1774f3e2bb2266" Name="Diagram1" ZoomLevel="99">
         <EntityTypeShape EntityType="SECURITY_DBModel.UserMaster" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
         <EntityTypeShape EntityType="SECURITY_DBModel.Reservation" Width="1.5" PointX="7.25" PointY="2.875" />
         <AssociationConnector Association="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA" />

@@ -315,6 +315,13 @@ namespace SekkaWahda.Controllers
 
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetUser(int id) 
+        {
+
+
+        }
+
 
 
     }

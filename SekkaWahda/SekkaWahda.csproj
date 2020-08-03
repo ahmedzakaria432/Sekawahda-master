@@ -254,6 +254,7 @@
     <Compile Include="Models\TripValidated.cs" />
     <Compile Include="Models\TripViewModel.cs" />
     <Compile Include="Models\UserAddPhotoDto.cs" />
+    <Compile Include="Models\UserDto.cs" />
     <Compile Include="Models\UserMaster.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

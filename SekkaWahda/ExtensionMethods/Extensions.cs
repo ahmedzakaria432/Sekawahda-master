@@ -14,7 +14,7 @@ namespace SekkaWahda.ExtensionMethods
             FileName = FileName.Trim('"');
 
             var Extension = FileName.Substring(FileName.LastIndexOf("."));
-            var NameWithoutExtension = FileName.Substring(0, FileName.LastIndexOf("."));
+            var NameWithoutExtension = FileName.Substring(FileName.IndexOf(FileName.First()), FileName.LastIndexOf("."));
 
 
             

@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Http;
 using SekkaWahda.ExtensionMethods;
 using System.IO;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 
 namespace SekkaWahda.Controllers
 {
@@ -23,8 +25,9 @@ namespace SekkaWahda.Controllers
             {
 
                 var CarToAdd = new Car();
-                CarToAdd.carColor = HttpContext.Current.Request.Params["carColor"];
-                CarToAdd.CarModel = HttpContext.Current.Request.Params["carModel"];
+                var form = HttpContext.Current.Request.Form;
+                    CarToAdd.carColor = HttpContext.Current.Request.Form["carColor"];
+                CarToAdd.CarModel = HttpContext.Current.Request.Form["CarModel"];
 
                 CarToAdd.UserId = context.UserMasters.FirstOrDefault(u => u.UserName == (RequestContext.Principal.Identity.Name)).UserID;
 
@@ -42,12 +45,14 @@ namespace SekkaWahda.Controllers
 
                 }
                 context.Cars.Add(CarToAdd);
-                context.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Car added successfully");
+               
+                    context.SaveChanges();
+               
+                               return Request.CreateResponse(HttpStatusCode.OK, "Car added successfully");
             }
             catch (Exception ex) 
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
         [HttpPut]
@@ -64,13 +69,11 @@ namespace SekkaWahda.Controllers
                     var postedImagePath = HttpContext.Current.Server.MapPath("~/" + filename);
                     PostedImage.SaveAs(postedImagePath);
 
-                    using (SECURITY_DBEntities context = new SECURITY_DBEntities())
-                    {
+                   
                         context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name)
                             .imagePath = postedImagePath;
                         context.SaveChanges();
-                    }
-                 
+                                    
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, "image Updated Successfully.");
@@ -119,7 +122,9 @@ namespace SekkaWahda.Controllers
                 {
                     carColor = car.carColor,
                     CarModel=car.CarModel,
-                    CarUrl=url
+                    CarUrl=url,
+                    UserId=CurrentUser.UserID
+
                    
                 };
 
@@ -133,8 +138,52 @@ namespace SekkaWahda.Controllers
             
 
         }
+        [HttpDelete]
+        public HttpResponseMessage DeleteCar(int id)
+        {
+            try
+            {
+                var CurrentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
+                var CarToDelete = context.Cars.FirstOrDefault(c => c.ID == id);
+                if (CarToDelete != null && CurrentUser.UserID == CarToDelete.UserId)
+                {
+                    context.Cars.Remove(CarToDelete);
+                    context.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "car deleted successfully");
 
 
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $"the car with id {id} wasn't found or you may not authorize to delete this car");
+            }
+            catch (Exception ex) 
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateCar(int id, CarDto car) 
+        {
+            try
+            {
+                var CurrentUser = context.UserMasters.FirstOrDefault(u=>u.UserName==RequestContext.Principal.Identity.Name);
+                var CarToUpdate = context.Cars.Find(id);
+                if (CarToUpdate != null && CarToUpdate.UserId == CurrentUser.UserID) 
+                {
+                    CarToUpdate.carColor = car.carColor;
+                    CarToUpdate.CarModel = car.CarModel;
+                    context.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Car was Updated Successfully");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Car was not found or yo are not authorize to update it");
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+        }
 
 
 
