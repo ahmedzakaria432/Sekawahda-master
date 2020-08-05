@@ -51,7 +51,11 @@ namespace SekkaWahda.Controllers
                 };
                 var CurrentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
-                var ReservationOfUserOfThisTrip = CurrentUser.Reservations.FirstOrDefault(r=>r.TripId==User.trips.FirstOrDefault().ID);
+                var UserTrip = User.trips.FirstOrDefault();
+                Reservation ReservationOfUserOfThisTrip = new Reservation();
+                if (UserTrip != null)
+                    ReservationOfUserOfThisTrip = CurrentUser.Reservations.FirstOrDefault(r => r.TripId == UserTrip.ID);
+
                 if (User.UserName == RequestContext.Principal.Identity.Name)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, profileDto);
