@@ -216,6 +216,7 @@
     <Compile Include="Controllers\CarController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HomePageController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\ReservationController.cs" />
     <Compile Include="Controllers\testController.cs" />
     <Compile Include="ExtensionMethods\Extensions.cs" />
@@ -227,6 +228,7 @@
     </Compile>
     <Compile Include="Models\CarDto.cs" />
     <Compile Include="Models\CheckValidation.cs" />
+    <Compile Include="Models\EventArgsModels\TripExpiredEventArgs.cs" />
     <Compile Include="Models\LicenseModel.cs" />
     <Compile Include="Models\Model1.Context.cs">
       <AutoGen>True</AutoGen>
@@ -244,6 +246,10 @@
       <DependentUpon>Model1.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\MyAuthorizationServerProvider.cs" />
+    <Compile Include="Models\ProfileDto.cs" />
+    <Compile Include="Models\Rating.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Reservation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

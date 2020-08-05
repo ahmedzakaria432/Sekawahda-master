@@ -28,11 +28,11 @@ namespace SekkaWahda.Controllers
                 var form = HttpContext.Current.Request.Form;
                     CarToAdd.carColor = HttpContext.Current.Request.Form["carColor"];
                 CarToAdd.CarModel = HttpContext.Current.Request.Form["CarModel"];
-
+                CarToAdd.CarLicense= HttpContext.Current.Request.Form["CarLicense"];
                 CarToAdd.UserId = context.UserMasters.FirstOrDefault(u => u.UserName == (RequestContext.Principal.Identity.Name)).UserID;
 
                 var files = HttpContext.Current.Request.Files;
-                if (files == null)
+                if (files == null||files.Count==0)
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "You must upload photo of car");
                 foreach (string file in files)
                 {
@@ -42,8 +42,9 @@ namespace SekkaWahda.Controllers
                     PostedImage.SaveAs(postedImagePath);
 
                     CarToAdd.CarImagePath = postedImagePath;
-
+                    
                 }
+                
                 context.Cars.Add(CarToAdd);
                
                     context.SaveChanges();

@@ -15,16 +15,16 @@ namespace SekkaWahda.Models
 using System;
     using System.Collections.Generic;
     
-public partial class Reservation
+public partial class Rating
 {
 
-    public int ID { get; set; }
+    public int RatingId { get; set; }
 
     public Nullable<int> TravellerId { get; set; }
 
-    public Nullable<int> TripId { get; set; }
+    public Nullable<int> DriverId { get; set; }
 
-    public Nullable<bool> Accebted { get; set; }
+    public Nullable<byte> RateValue { get; set; }
 
 
 

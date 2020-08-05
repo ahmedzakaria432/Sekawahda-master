@@ -28,6 +28,8 @@ public partial class UserMaster
 
         this.Cars = new HashSet<Car>();
 
+        this.Ratings = new HashSet<Rating>();
+
     }
 
 
@@ -47,8 +49,6 @@ public partial class UserMaster
 
     public string DriverLicense { get; set; }
 
-    public string CarLicense { get; set; }
-
     public string FullName { get; set; }
 
     public string imagePath { get; set; }
@@ -56,6 +56,8 @@ public partial class UserMaster
     public string PhoneNumber { get; set; }
 
     public string ImageUrl { get; set; }
+
+    public Nullable<decimal> DriverTotalRate { get; set; }
 
 
 
@@ -70,6 +72,10 @@ public partial class UserMaster
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 
     public virtual ICollection<Car> Cars { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+    public virtual ICollection<Rating> Ratings { get; set; }
 
 }
 

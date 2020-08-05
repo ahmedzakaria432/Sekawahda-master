@@ -11,6 +11,7 @@ namespace SekkaWahda.Controllers
     public class HomePageController : ApiController
     { SECURITY_DBEntities context = new SECURITY_DBEntities();
         
+       
        [HttpGet]
         [ActionName("GetAllTrips")]
         public HttpResponseMessage GetAllTrips()
@@ -113,7 +114,7 @@ namespace SekkaWahda.Controllers
         public HttpResponseMessage PostTrip([FromBody]trip NewTrip)
         {
             var CurrentUser = context.UserMasters.Where(u => u.UserName == RequestContext.Principal.Identity.Name).FirstOrDefault();
-            if (CurrentUser.CarLicense != null && CurrentUser.DriverLicense != null)
+            if (CurrentUser.DriverLicense != null && (CurrentUser.Cars!=null||CurrentUser.Cars.Count>0))
             {
 
                 if (ModelState.IsValid)
@@ -162,9 +163,9 @@ catch (Exception ex)
                    
                     var CurrentUser=context.UserMasters.FirstOrDefault(u=>u.UserName== RequestContext.Principal.Identity.Name);
                     HttpResponseMessage response;
-                    var resp=(CurrentUser.CarLicense == null || CurrentUser.DriverLicense == null) ?
-                        response=Request.CreateResponse(HttpStatusCode.NotFound,"you should enter your car license and driving license "):
-                        response = Request.CreateResponse(HttpStatusCode.OK, "you have currently entered your car license and driving license ");
+                    var resp=(CurrentUser.Cars == null||CurrentUser.Cars.Count==0 || CurrentUser.DriverLicense == null) ?
+                        response=Request.CreateResponse(HttpStatusCode.NotFound,"you should enter details for your car and driving license "):
+                        response = Request.CreateResponse(HttpStatusCode.OK, "you have currently entered your car details and driving license ");
                     return response;
                 }
                 catch (Exception ex)
@@ -185,7 +186,7 @@ catch (Exception ex)
             var Current = RequestContext.Principal.Identity.Name;
 
             var user = context.UserMasters.FirstOrDefault(u => u.UserName == Current);
-            user.CarLicense = licences.CarLicense; 
+           
             user.DriverLicense = licences.DriverLicense;
             try
             {

@@ -28,6 +28,10 @@ public partial class Car
 
     public Nullable<int> UserId { get; set; }
 
+    public string CarImageRelativeUrl { get; set; }
+
+    public string CarLicense { get; set; }
+
 
 
     public virtual UserMaster UserMaster { get; set; }

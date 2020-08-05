@@ -14,6 +14,17 @@
           <Property Name="carColor" Type="nvarchar" MaxLength="50" />
           <Property Name="UserId" Type="int" />
           <Property Name="CarImagePath" Type="nvarchar(max)" />
+          <Property Name="CarImageRelativeUrl" Type="nvarchar(max)" />
+          <Property Name="CarLicense" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="RatingId" />
+          </Key>
+          <Property Name="RatingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TravellerId" Type="int" />
+          <Property Name="DriverId" Type="int" />
+          <Property Name="RateValue" Type="tinyint" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -22,6 +33,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TravellerId" Type="int" />
           <Property Name="TripId" Type="int" />
+          <Property Name="Accebted" Type="bit" />
         </EntityType>
         <EntityType Name="trip">
           <Key>
@@ -47,11 +59,11 @@
           <Property Name="city" Type="nvarchar" MaxLength="20" />
           <Property Name="SSN" Type="nvarchar" MaxLength="20" />
           <Property Name="DriverLicense" Type="nvarchar" MaxLength="20" />
-          <Property Name="CarLicense" Type="nvarchar" MaxLength="20" />
           <Property Name="FullName" Type="nvarchar" MaxLength="50" />
           <Property Name="imagePath" Type="nvarchar" MaxLength="300" />
           <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
           <Property Name="ImageUrl" Type="nvarchar(max)" />
+          <Property Name="DriverTotalRate" Type="decimal" Precision="18" Scale="0" />
         </EntityType>
         <Association Name="FK__Car__UserId__48CFD27E">
           <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
@@ -62,6 +74,18 @@
             </Principal>
             <Dependent Role="Car">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Rating__Travelle__619B8048">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="TravellerId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -91,12 +115,17 @@
         </Association>
         <EntityContainer Name="SECURITY_DBModelStoreContainer">
           <EntitySet Name="Car" EntityType="Self.Car" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rating" EntityType="Self.Rating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reservation" EntityType="Self.Reservation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trip" EntityType="Self.trip" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMaster" EntityType="Self.UserMaster" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Car__UserId__48CFD27E" Association="Self.FK__Car__UserId__48CFD27E">
             <End Role="UserMaster" EntitySet="UserMaster" />
             <End Role="Car" EntitySet="Car" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Rating__Travelle__619B8048" Association="Self.FK__Rating__Travelle__619B8048">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="Rating" EntitySet="Rating" />
           </AssociationSet>
           <AssociationSet Name="FK__Reservati__Trave__6383C8BA" Association="Self.FK__Reservati__Trave__6383C8BA">
             <End Role="UserMaster" EntitySet="UserMaster" />
@@ -123,7 +152,6 @@
           <Property Name="city" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="SSN" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="DriverLicense" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="CarLicense" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="imagePath" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Reservations" Relationship="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA" FromRole="UserMaster" ToRole="Reservation" />
@@ -131,6 +159,8 @@
           <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="ImageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Cars" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="UserMaster" ToRole="Car" />
+          <NavigationProperty Name="Ratings" Relationship="SECURITY_DBModel.FK__Rating__Travelle__619B8048" FromRole="UserMaster" ToRole="Rating" />
+          <Property Name="DriverTotalRate" Type="Decimal" Precision="18" Scale="0" />
         </EntityType>
         <EntityContainer Name="SECURITY_DBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
@@ -149,6 +179,11 @@
             <End Role="UserMaster" EntitySet="UserMasters" />
             <End Role="Car" EntitySet="Cars" />
           </AssociationSet>
+          <EntitySet Name="Ratings" EntityType="SECURITY_DBModel.Rating" />
+          <AssociationSet Name="FK__Rating__Travelle__619B8048" Association="SECURITY_DBModel.FK__Rating__Travelle__619B8048">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="Rating" EntitySet="Ratings" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Reservation">
           <Key>
@@ -158,6 +193,7 @@
           <Property Name="TravellerId" Type="Int32" />
           <Property Name="TripId" Type="Int32" />
           <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Reservati__Trave__6383C8BA" FromRole="Reservation" ToRole="UserMaster" />
+          <Property Name="Accebted" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Reservati__Trave__6383C8BA">
           <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
@@ -206,6 +242,8 @@
           <Property Name="CarImagePath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="UserId" Type="Int32" />
           <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="Car" ToRole="UserMaster" />
+          <Property Name="CarImageRelativeUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CarLicense" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK__Car__UserId__48CFD27E">
           <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
@@ -219,6 +257,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="RatingId" />
+          </Key>
+          <Property Name="RatingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TravellerId" Type="Int32" />
+          <Property Name="DriverId" Type="Int32" />
+          <Property Name="RateValue" Type="Byte" />
+          <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__Rating__Travelle__619B8048" FromRole="Rating" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK__Rating__Travelle__619B8048">
+          <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
+          <End Type="SECURITY_DBModel.Rating" Role="Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="TravellerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -228,6 +288,7 @@
           <EntitySetMapping Name="UserMasters">
             <EntityTypeMapping TypeName="SECURITY_DBModel.UserMaster">
               <MappingFragment StoreEntitySet="UserMaster">
+                <ScalarProperty Name="DriverTotalRate" ColumnName="DriverTotalRate" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
                 <ScalarProperty Name="imagePath" ColumnName="imagePath" />
@@ -240,13 +301,13 @@
                 <ScalarProperty Name="city" ColumnName="city" />
                 <ScalarProperty Name="SSN" ColumnName="SSN" />
                 <ScalarProperty Name="DriverLicense" ColumnName="DriverLicense" />
-                <ScalarProperty Name="CarLicense" ColumnName="CarLicense" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Reservations">
             <EntityTypeMapping TypeName="SECURITY_DBModel.Reservation">
               <MappingFragment StoreEntitySet="Reservation">
+                <ScalarProperty Name="Accebted" ColumnName="Accebted" />
                 <ScalarProperty Name="TripId" ColumnName="TripId" />
                 <ScalarProperty Name="TravellerId" ColumnName="TravellerId" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -269,11 +330,23 @@
           <EntitySetMapping Name="Cars">
             <EntityTypeMapping TypeName="SECURITY_DBModel.Car">
               <MappingFragment StoreEntitySet="Car">
+                <ScalarProperty Name="CarLicense" ColumnName="CarLicense" />
+                <ScalarProperty Name="CarImageRelativeUrl" ColumnName="CarImageRelativeUrl" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="CarImagePath" ColumnName="CarImagePath" />
                 <ScalarProperty Name="carColor" ColumnName="carColor" />
                 <ScalarProperty Name="CarModel" ColumnName="CarModel" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ratings">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.Rating">
+              <MappingFragment StoreEntitySet="Rating">
+                <ScalarProperty Name="RateValue" ColumnName="RateValue" />
+                <ScalarProperty Name="DriverId" ColumnName="DriverId" />
+                <ScalarProperty Name="TravellerId" ColumnName="TravellerId" />
+                <ScalarProperty Name="RatingId" ColumnName="RatingId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

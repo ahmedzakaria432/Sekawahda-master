@@ -33,8 +33,9 @@ namespace SekkaWahda.Controllers
                     UserSSN = CurrentUser.SSN,
                     UserEmailID = CurrentUser.UserEmailID,
                     FullName = CurrentUser.FullName,
-                    CarLicense = CurrentUser.CarLicense,
-                    DriverLicense = CurrentUser.DriverLicense
+                    
+                    DriverLicense = CurrentUser.DriverLicense,
+                    
                    
 
                 };

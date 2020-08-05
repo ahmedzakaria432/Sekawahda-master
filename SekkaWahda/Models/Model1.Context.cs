@@ -40,6 +40,8 @@ public partial class SECURITY_DBEntities : DbContext
 
     public virtual DbSet<Car> Cars { get; set; }
 
+    public virtual DbSet<Rating> Ratings { get; set; }
+
 }
 
 }
