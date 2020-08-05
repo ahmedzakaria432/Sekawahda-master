@@ -34,6 +34,7 @@ namespace SekkaWahda.Models
         public string CarLicense { get; set; }
         public string UserImageUrl { get; set; }
         public string CarImageUrl { get; set; }
+        public Nullable<decimal> DriverTotalRate { get; set; }
 
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SekkaWahda.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -33,6 +34,17 @@ namespace SekkaWahda.ExtensionMethods
             FileName = String.Concat(FileName.Where(c => !char.IsWhiteSpace(c)));
             return FileName;
 
+        }
+        public static decimal CalcTotalRate(this UserMaster user) 
+        {
+            using (SECURITY_DBEntities context = new SECURITY_DBEntities()) 
+            {
+                List<byte?> ratings = context.Ratings.Where(r => r.DriverId == user.UserID).Select(r => r.RateValue).ToList();
+                var TotalRate =( (decimal)ratings.Sum<byte?>(l =>l.Value)/ratings.Count);
+                TotalRate = Math.Round(TotalRate, 2);
+                return TotalRate;
+
+            }
         }
 
     }
