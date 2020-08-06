@@ -12,6 +12,7 @@ namespace SekkaWahda.Controllers
     public class RatingController : ApiController
     {
         SECURITY_DBEntities context = new SECURITY_DBEntities();
+      [HttpPost]
         public HttpResponseMessage MakeRate(RateDto rateDto) 
         {
             try
