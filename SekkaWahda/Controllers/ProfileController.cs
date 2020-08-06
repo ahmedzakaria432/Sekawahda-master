@@ -146,9 +146,8 @@ namespace SekkaWahda.Controllers
                     foreach (string file in files)
                     {
                         var PostedImage = files[file];
-                        var path= HttpContext.Current.Server.MapPath("~/");
                         var fileNameWithExtension= PostedImage.FileName.NoRepeateInFileName(RequestContext.Principal.Identity.Name);
-                        var CarImagePath = HttpContext.Current.Server.MapPath(path + fileNameWithExtension);
+                        var CarImagePath = HttpContext.Current.Server.MapPath("~/" + fileNameWithExtension);
                         car.CarImagePath = CarImagePath;
                         car.CarImageRelativeUrl = $"~/{fileNameWithExtension}";
                         PostedImage.SaveAs(CarImagePath);
