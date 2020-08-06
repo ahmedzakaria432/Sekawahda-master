@@ -133,13 +133,17 @@ namespace SekkaWahda.Controllers
                     
                     Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                     if (car == null)
-                    { 
-                     car = new Car() {UserId=currentUser.UserID };
-                    context.Cars.Add(car);
+                    {
+                    if (HttpContext.Current.Request.Form["CarLicense"] == null || HttpContext.Current.Request.Form["CarLicense"] == string.Empty)
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you must enter your car license for first time");
+
+
+                    car = new Car() {UserId=currentUser.UserID,CarLicense= HttpContext.Current.Request.Form["CarLicense"]};
+                     context.Cars.Add(car);
 
                     
                     }
-                car.carColor = HttpContext.Current.Request.Form["carColor"];
+                    car.carColor = HttpContext.Current.Request.Form["carColor"];
                     car.CarModel = HttpContext.Current.Request.Form["CarModel"];
 
                     
