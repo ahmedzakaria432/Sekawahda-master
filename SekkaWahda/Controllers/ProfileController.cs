@@ -124,35 +124,37 @@ namespace SekkaWahda.Controllers
 
                 var currentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
-                    var files = HttpContext.Current.Request.Files;
-                   
-                     if(HttpContext.Current.Request.Form["city"]!=null|| HttpContext.Current.Request.Form["city"]!=string.Empty)
-                    currentUser.city = HttpContext.Current.Request.Form["city"];
-                     if(HttpContext.Current.Request.Form["FullName"] != null || HttpContext.Current.Request.Form["FullName"] != string.Empty)
-                    currentUser.FullName = HttpContext.Current.Request.Form["FullName"];
-                if (HttpContext.Current.Request.Form["PhoneNumber"] != null || HttpContext.Current.Request.Form["PhoneNumber"] != string.Empty)
-                    currentUser.PhoneNumber = HttpContext.Current.Request.Form["PhoneNumber"];
-                if (HttpContext.Current.Request.Form["UserEmailID"] != null || HttpContext.Current.Request.Form["UserEmailID"] != string.Empty)
-                    currentUser.UserEmailID = HttpContext.Current.Request.Form["UserEmailID"];
+                var files = HttpContext.Current.Request.Files;
+
+                if (HttpContext.Current.Request.Form["city"] != null && HttpContext.Current.Request.Form["city"] != string.Empty)
+                { currentUser.city = HttpContext.Current.Request.Form["city"]; }
+                if (HttpContext.Current.Request.Form["FullName"] != null && HttpContext.Current.Request.Form["FullName"] != string.Empty)
+                { currentUser.FullName = HttpContext.Current.Request.Form["FullName"]; }
+                if (HttpContext.Current.Request.Form["PhoneNumber"] != null && HttpContext.Current.Request.Form["PhoneNumber"] != string.Empty)
+                { currentUser.PhoneNumber = HttpContext.Current.Request.Form["PhoneNumber"]; }
+
+                if (HttpContext.Current.Request.Form["UserEmailID"] != null && HttpContext.Current.Request.Form["UserEmailID"] != string.Empty)
+                { currentUser.UserEmailID = HttpContext.Current.Request.Form["UserEmailID"]; }
 
 
-                    
-                    Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
-                    if (car == null)
-                    {
+
+                Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
+                if (car == null)
+                {
                     if (HttpContext.Current.Request.Form["CarLicense"] == null || HttpContext.Current.Request.Form["CarLicense"] == string.Empty)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you must enter your car license for first time");
 
 
-                    car = new Car() {UserId=currentUser.UserID,CarLicense= HttpContext.Current.Request.Form["CarLicense"]};
-                     context.Cars.Add(car);
+                    car = new Car() { UserId = currentUser.UserID, CarLicense = HttpContext.Current.Request.Form["CarLicense"] };
+                    context.Cars.Add(car);
 
-                    
-                    }
-                if (HttpContext.Current.Request.Form["carColor"] != null || HttpContext.Current.Request.Form["carColor"] != string.Empty)
-                    car.carColor = HttpContext.Current.Request.Form["carColor"];
-                if (HttpContext.Current.Request.Form["CarModel"] != null || HttpContext.Current.Request.Form["CarModel"] != string.Empty)
-                    car.CarModel = HttpContext.Current.Request.Form["CarModel"];
+
+                }
+                var tset = HttpContext.Current.Request.Form["carColor"];
+                if ( (tset != null && tset != string.Empty))
+                { car.carColor = HttpContext.Current.Request.Form["carColor"]; }
+                if (HttpContext.Current.Request.Form["CarModel"] != null && HttpContext.Current.Request.Form["CarModel"] != string.Empty)
+                { car.CarModel = HttpContext.Current.Request.Form["CarModel"]; }
 
                     
                     foreach (string file in files)
