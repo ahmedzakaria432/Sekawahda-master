@@ -10,9 +10,31 @@ namespace SekkaWahda.Controllers
 {[Authorize]
     public class HomePageController : ApiController
     { SECURITY_DBEntities context = new SECURITY_DBEntities();
-        
-       
-       [HttpGet]
+
+
+
+        [HttpGet]
+        [ActionName("UserInfoToAccessProfile")]
+        public HttpResponseMessage UserInfoToAccessProfile()
+        {
+            try
+            {
+                var CurrentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
+                string name;
+                if (CurrentUser.FullName == null || CurrentUser.FullName == string.Empty)
+                    name = CurrentUser.UserName;
+                name = CurrentUser.FullName;
+                var userInfoToReturn = new { name = name, UserID = CurrentUser.UserID, CurrentUser.ImageUrl };
+                return Request.CreateResponse(HttpStatusCode.OK, userInfoToReturn);
+            }
+            catch (Exception ex) 
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+
+            }
+        }
+
+        [HttpGet]
         [ActionName("GetAllTrips")]
         public HttpResponseMessage GetAllTrips()
         {

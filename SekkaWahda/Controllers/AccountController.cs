@@ -1,4 +1,5 @@
-﻿using SekkaWahda.Models;
+﻿using SekkaWahda.ExtensionMethods;
+using SekkaWahda.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -128,12 +129,16 @@ namespace SekkaWahda.Controllers
             foreach (string file in files)
             {
                 var postedFile = files[file];
-                var filePath = HttpContext.Current.Server.MapPath("~/"+ postedFile.FileName);
+                var fileName = postedFile.FileName;
+                fileName = fileName.NoRepeateInFileName(CurrentUser.UserName);
+
+                var filePath = HttpContext.Current.Server.MapPath("~/"+ fileName);
                 postedFile.SaveAs(filePath);
                 CurrentUser.imagePath = filePath;
-                context.SaveChanges();
+                CurrentUser.ImageUrl = "~/" + postedFile.FileName;
 
             }
+            context.SaveChanges();
             return Request.CreateResponse(HttpStatusCode.Created,"photo Added successfully");
 
             //var folderName = Path.Combine("UsersPhotos");
