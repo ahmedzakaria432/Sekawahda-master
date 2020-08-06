@@ -167,7 +167,7 @@ namespace SekkaWahda.Controllers
             catch (Exception ex)
             {
 
-                return Request.CreateErrorResponse(HttpStatusCode.OK, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
             }
         }
 
