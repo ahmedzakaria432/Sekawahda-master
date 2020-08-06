@@ -47,10 +47,13 @@ namespace SekkaWahda.Controllers
                     SSN=User.SSN,
                     UserEmailID=User.UserEmailID,
                     UserID=User.UserID,
-                    UserName=User.UserName
+                    UserName=User.UserName,
+                    
                    
                 
                 };
+                if (profileDto.DriverTotalRate == null)
+                    profileDto.DriverTotalRate = 0;
                 var CurrentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
                 var UserTrip = User.trips.FirstOrDefault();
@@ -117,16 +120,19 @@ namespace SekkaWahda.Controllers
         {
             try
             {
-                /*city   , FullName   , PhoneNumber,  UserEmailID,   carColor, CarModel, image file   */
+                /*city   , FullName   , PhoneNumber,  UserEmailID,   carColor, CarModel, image file ,  CarLicense  */
 
                 var currentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
                     var files = HttpContext.Current.Request.Files;
                    
-
+                     if(HttpContext.Current.Request.Form["city"]!=null|| HttpContext.Current.Request.Form["city"]!=string.Empty)
                     currentUser.city = HttpContext.Current.Request.Form["city"];
+                     if(HttpContext.Current.Request.Form["FullName"] != null || HttpContext.Current.Request.Form["FullName"] != string.Empty)
                     currentUser.FullName = HttpContext.Current.Request.Form["FullName"];
+                if (HttpContext.Current.Request.Form["PhoneNumber"] != null || HttpContext.Current.Request.Form["PhoneNumber"] != string.Empty)
                     currentUser.PhoneNumber = HttpContext.Current.Request.Form["PhoneNumber"];
+                if (HttpContext.Current.Request.Form["UserEmailID"] != null || HttpContext.Current.Request.Form["UserEmailID"] != string.Empty)
                     currentUser.UserEmailID = HttpContext.Current.Request.Form["UserEmailID"];
 
 
@@ -143,7 +149,9 @@ namespace SekkaWahda.Controllers
 
                     
                     }
+                if (HttpContext.Current.Request.Form["carColor"] != null || HttpContext.Current.Request.Form["carColor"] != string.Empty)
                     car.carColor = HttpContext.Current.Request.Form["carColor"];
+                if (HttpContext.Current.Request.Form["CarModel"] != null || HttpContext.Current.Request.Form["CarModel"] != string.Empty)
                     car.CarModel = HttpContext.Current.Request.Form["CarModel"];
 
                     
