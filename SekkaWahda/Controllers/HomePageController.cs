@@ -23,7 +23,8 @@ namespace SekkaWahda.Controllers
                 string name;
                 if (CurrentUser.FullName == null || CurrentUser.FullName == string.Empty)
                     name = CurrentUser.UserName;
-                name = CurrentUser.FullName;
+                else
+                    name = CurrentUser.FullName;
                 var userInfoToReturn = new { name = name, UserID = CurrentUser.UserID, CurrentUser.ImageUrl };
                 return Request.CreateResponse(HttpStatusCode.OK, userInfoToReturn);
             }
