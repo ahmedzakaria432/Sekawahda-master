@@ -8,8 +8,10 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 
+
 namespace SekkaWahda.Controllers
 {
+    [Authorize]
     public class ProfileController : ApiController
     {
         SECURITY_DBEntities context = new SECURITY_DBEntities();
@@ -52,7 +54,7 @@ namespace SekkaWahda.Controllers
                 var CurrentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
                 var UserTrip = User.trips.FirstOrDefault();
-                Reservation ReservationOfUserOfThisTrip = new Reservation();
+                Reservation ReservationOfUserOfThisTrip =default(Reservation);
                 if (UserTrip != null)
                     ReservationOfUserOfThisTrip = CurrentUser.Reservations.FirstOrDefault(r => r.TripId == UserTrip.ID);
 
@@ -110,17 +112,17 @@ namespace SekkaWahda.Controllers
 
 
         }
+        [HttpPost]
         public HttpResponseMessage UpdateProfile() 
         {
             try
             {
-                    var currentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
+                /*city   , FullName   , PhoneNumber,  UserEmailID,   carColor, CarModel, image file   */
+
+                var currentUser = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name);
 
                     var files = HttpContext.Current.Request.Files;
-                    if (files.Count == 0) 
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, "you must upload image of car");
-                    }
+                   
 
                     currentUser.city = HttpContext.Current.Request.Form["city"];
                     currentUser.FullName = HttpContext.Current.Request.Form["FullName"];
@@ -131,9 +133,13 @@ namespace SekkaWahda.Controllers
                     
                     Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                     if (car == null)
-                        car = new Car() {UserId=currentUser.UserID };
+                    { 
+                     car = new Car() {UserId=currentUser.UserID };
+                    context.Cars.Add(car);
 
-                    car.carColor = HttpContext.Current.Request.Form["carColor"];
+                    
+                    }
+                car.carColor = HttpContext.Current.Request.Form["carColor"];
                     car.CarModel = HttpContext.Current.Request.Form["CarModel"];
 
                     
