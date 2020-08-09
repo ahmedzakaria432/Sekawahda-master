@@ -41,26 +41,44 @@ namespace SekkaWahda.Controllers
         {
             try
             {
-                var tripsAllTrips = context.trips.ToList();
-                var trips = context.trips.ToList().Select(tr => new
-                {
-                    UserName = context.UserMasters.Where(u => u.UserID == tr.DriverId).ToList().FirstOrDefault().UserName,
-                    DateOfTrip = tr.DateOfTrip,
-                    DriverId = tr.DriverId,
-                    FromCity = tr.FromCity,
-                    ID = tr.ID,
-                    PlaceToMeet = tr.PlaceToMeet,
-                    TimeOfTrip = tr.TimeOfTrip,
-                    ToCity = tr.ToCity
+                var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
+                    (tr, us) => new
+                    {
+                        DateOfTrip = tr.DateOfTrip,
+                        DriverId = tr.DriverId,
+                        FromCity = tr.FromCity,
+                        ID = tr.ID,
+                        PlaceToMeet = tr.PlaceToMeet,
+                        TimeOfTrip = tr.TimeOfTrip,
+                        ToCity = tr.ToCity,
+                        Name = (us.FullName == null) ? us.UserName : us.FullName,
+                        ImageUrl = us.ImageUrl,
+                        PostTime=(tr.TimeOfPost.Value.Date==DateTime.Now.Date)?
+                        (tr.TimeOfPost.Value.Hour==DateTime.Now.Hour)? DateTime.Now.Minute-tr.TimeOfPost.Value.Minute
+                        : DateTime.Now.Hour- tr.TimeOfPost.Value.Hour: DateTime.Now.DayOfYear - tr.TimeOfPost.Value.DayOfYear
 
 
-                }).ToList();
-                if (tripsAllTrips == null)
+                    });
+                //var tripsAllTrips = context.trips.ToList();
+                //var trips = context.trips.ToList().Select(tr => new
+                //{
+                //    UserName = context.UserMasters.Where(u => u.UserID == tr.DriverId).ToList().FirstOrDefault().UserName,
+                //    DateOfTrip = tr.DateOfTrip,
+                //    DriverId = tr.DriverId,
+                //    FromCity = tr.FromCity,
+                //    ID = tr.ID,
+                //    PlaceToMeet = tr.PlaceToMeet,
+                //    TimeOfTrip = tr.TimeOfTrip,
+                //    ToCity = tr.ToCity
+
+
+                //}).ToList();
+                if (tripss == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "There is no trips");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, trips);
+                return Request.CreateResponse(HttpStatusCode.OK, tripss);
             }
             catch (Exception ex)
             {
@@ -76,6 +94,7 @@ namespace SekkaWahda.Controllers
         {
             try
             {
+                
                 var tripsInUserCity = context.trips.Where(x => x.FromCity == context.UserMasters.Where
                 (u => u.UserName == RequestContext.Principal.Identity.Name).FirstOrDefault().city).ToList().Select(tr=>new {
                     DateOfTrip=   tr.DateOfTrip,

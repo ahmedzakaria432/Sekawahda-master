@@ -46,6 +46,7 @@
           <Property Name="DateOfTrip" Type="datetime" Nullable="false" />
           <Property Name="TimeOfTrip" Type="time" Precision="7" Nullable="false" />
           <Property Name="DriverId" Type="int" />
+          <Property Name="TimeOfPost" Type="datetime" />
         </EntityType>
         <EntityType Name="UserMaster">
           <Key>
@@ -219,6 +220,7 @@
           <Property Name="TimeOfTrip" Type="Time" Nullable="false" Precision="7" />
           <Property Name="DriverId" Type="Int32" />
           <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__trip__DriverId__60A75C0F" FromRole="trip" ToRole="UserMaster" />
+          <Property Name="TimeOfPost" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK__trip__DriverId__60A75C0F">
           <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
@@ -317,6 +319,7 @@
           <EntitySetMapping Name="trips">
             <EntityTypeMapping TypeName="SECURITY_DBModel.trip">
               <MappingFragment StoreEntitySet="trip">
+                <ScalarProperty Name="TimeOfPost" ColumnName="TimeOfPost" />
                 <ScalarProperty Name="DriverId" ColumnName="DriverId" />
                 <ScalarProperty Name="TimeOfTrip" ColumnName="TimeOfTrip" />
                 <ScalarProperty Name="DateOfTrip" ColumnName="DateOfTrip" />

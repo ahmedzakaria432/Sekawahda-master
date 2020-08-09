@@ -32,6 +32,8 @@ public partial class trip
 
     public Nullable<int> DriverId { get; set; }
 
+    public Nullable<System.DateTime> TimeOfPost { get; set; }
+
 
 
     public virtual UserMaster UserMaster { get; set; }
