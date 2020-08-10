@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.SqlServer;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -34,17 +38,24 @@ namespace SekkaWahda.Controllers
 
             }
         }
-
+        
         [HttpGet]
         [ActionName("GetAllTrips")]
         public HttpResponseMessage GetAllTrips()
         {
             try
             {
+                
+                var timezone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+                
+                var dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+                var date = dateTime;    
+
+
                 var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
                     {
-                        DateOfTrip = tr.DateOfTrip,
+                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip),
                         DriverId = tr.DriverId,
                         FromCity = tr.FromCity,
                         ID = tr.ID,
@@ -53,12 +64,13 @@ namespace SekkaWahda.Controllers
                         ToCity = tr.ToCity,
                         Name = (us.FullName == null) ? us.UserName : us.FullName,
                         ImageUrl = us.ImageUrl,
-                        PostTime=(tr.TimeOfPost.Value.Date==DateTime.Now.Date)?
-                        (tr.TimeOfPost.Value.Hour==DateTime.Now.Hour)? DateTime.Now.Minute-tr.TimeOfPost.Value.Minute
-                        : DateTime.Now.Hour- tr.TimeOfPost.Value.Hour: DateTime.Now.DayOfYear - tr.TimeOfPost.Value.DayOfYear
-
-
-                    });
+                        PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+                        (tr.TimeOfPost.Value.Hour == date.Hour ?
+                        new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
+                        new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value,date ).Value, unit = "hours" }) :
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" },
+                      
+                    }).ToList();
                 //var tripsAllTrips = context.trips.ToList();
                 //var trips = context.trips.ToList().Select(tr => new
                 //{
@@ -82,7 +94,7 @@ namespace SekkaWahda.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
 
 
             }
