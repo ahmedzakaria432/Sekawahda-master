@@ -135,7 +135,7 @@ namespace SekkaWahda.Controllers
                 var filePath = HttpContext.Current.Server.MapPath("~/"+ fileName);
                 postedFile.SaveAs(filePath);
                 CurrentUser.imagePath = filePath;
-                CurrentUser.ImageUrl = "~/" + postedFile.FileName;
+                CurrentUser.ImageUrl = "~/" + fileName;
 
             }
             context.SaveChanges();
