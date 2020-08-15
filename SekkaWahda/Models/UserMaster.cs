@@ -30,6 +30,8 @@ public partial class UserMaster
 
         this.Ratings = new HashSet<Rating>();
 
+        this.notification_ = new HashSet<notification_>();
+
     }
 
 
@@ -76,6 +78,10 @@ public partial class UserMaster
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 
     public virtual ICollection<Rating> Ratings { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+    public virtual ICollection<notification_> notification_ { get; set; }
 
 }
 

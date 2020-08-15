@@ -17,6 +17,16 @@
           <Property Name="CarImageRelativeUrl" Type="nvarchar(max)" />
           <Property Name="CarLicense" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="notification_">
+          <Key>
+            <PropertyRef Name="NotificationID" />
+          </Key>
+          <Property Name="NotificationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReceiverID" Type="int" />
+          <Property Name="RaiserID" Type="int" />
+          <Property Name="Message_" Type="nvarchar" MaxLength="3000" />
+          <Property Name="TypeOfNotification" Type="nvarchar" MaxLength="400" />
+        </EntityType>
         <EntityType Name="Rating">
           <Key>
             <PropertyRef Name="RatingId" />
@@ -78,6 +88,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__notificat__Recei__6E01572D">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="notification_" Type="Self.notification_" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="notification_">
+              <PropertyRef Name="ReceiverID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Rating__Travelle__619B8048">
           <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
           <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
@@ -116,6 +138,7 @@
         </Association>
         <EntityContainer Name="SECURITY_DBModelStoreContainer">
           <EntitySet Name="Car" EntityType="Self.Car" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="notification_" EntityType="Self.notification_" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rating" EntityType="Self.Rating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reservation" EntityType="Self.Reservation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="trip" EntityType="Self.trip" Schema="dbo" store:Type="Tables" />
@@ -123,6 +146,10 @@
           <AssociationSet Name="FK__Car__UserId__48CFD27E" Association="Self.FK__Car__UserId__48CFD27E">
             <End Role="UserMaster" EntitySet="UserMaster" />
             <End Role="Car" EntitySet="Car" />
+          </AssociationSet>
+          <AssociationSet Name="FK__notificat__Recei__6E01572D" Association="Self.FK__notificat__Recei__6E01572D">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="notification_" EntitySet="notification_" />
           </AssociationSet>
           <AssociationSet Name="FK__Rating__Travelle__619B8048" Association="Self.FK__Rating__Travelle__619B8048">
             <End Role="UserMaster" EntitySet="UserMaster" />
@@ -162,6 +189,7 @@
           <NavigationProperty Name="Cars" Relationship="SECURITY_DBModel.FK__Car__UserId__48CFD27E" FromRole="UserMaster" ToRole="Car" />
           <NavigationProperty Name="Ratings" Relationship="SECURITY_DBModel.FK__Rating__Travelle__619B8048" FromRole="UserMaster" ToRole="Rating" />
           <Property Name="DriverTotalRate" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="notification_" Relationship="SECURITY_DBModel.FK__notificat__Recei__6E01572D" FromRole="UserMaster" ToRole="notification_" />
         </EntityType>
         <EntityContainer Name="SECURITY_DBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
@@ -184,6 +212,11 @@
           <AssociationSet Name="FK__Rating__Travelle__619B8048" Association="SECURITY_DBModel.FK__Rating__Travelle__619B8048">
             <End Role="UserMaster" EntitySet="UserMasters" />
             <End Role="Rating" EntitySet="Ratings" />
+          </AssociationSet>
+          <EntitySet Name="notification_" EntityType="SECURITY_DBModel.notification_" />
+          <AssociationSet Name="FK__notificat__Recei__6E01572D" Association="SECURITY_DBModel.FK__notificat__Recei__6E01572D">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="notification_" EntitySet="notification_" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Reservation">
@@ -281,6 +314,29 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="notification_">
+          <Key>
+            <PropertyRef Name="NotificationID" />
+          </Key>
+          <Property Name="NotificationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReceiverID" Type="Int32" />
+          <Property Name="RaiserID" Type="Int32" />
+          <Property Name="Message_" Type="String" MaxLength="3000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserMaster" Relationship="SECURITY_DBModel.FK__notificat__Recei__6E01572D" FromRole="notification_" ToRole="UserMaster" />
+          <Property Name="TypeOfNotification" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK__notificat__Recei__6E01572D">
+          <End Type="SECURITY_DBModel.UserMaster" Role="UserMaster" Multiplicity="0..1" />
+          <End Type="SECURITY_DBModel.notification_" Role="notification_" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="notification_">
+              <PropertyRef Name="ReceiverID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -350,6 +406,17 @@
                 <ScalarProperty Name="DriverId" ColumnName="DriverId" />
                 <ScalarProperty Name="TravellerId" ColumnName="TravellerId" />
                 <ScalarProperty Name="RatingId" ColumnName="RatingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="notification_">
+            <EntityTypeMapping TypeName="SECURITY_DBModel.notification_">
+              <MappingFragment StoreEntitySet="notification_">
+                <ScalarProperty Name="TypeOfNotification" ColumnName="TypeOfNotification" />
+                <ScalarProperty Name="Message_" ColumnName="Message_" />
+                <ScalarProperty Name="RaiserID" ColumnName="RaiserID" />
+                <ScalarProperty Name="ReceiverID" ColumnName="ReceiverID" />
+                <ScalarProperty Name="NotificationID" ColumnName="NotificationID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

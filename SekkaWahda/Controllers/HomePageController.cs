@@ -16,6 +16,53 @@ namespace SekkaWahda.Controllers
     { SECURITY_DBEntities context = new SECURITY_DBEntities();
 
 
+        public HttpResponseMessage SearchForTrip(SearchForTripDto searchDto) 
+        {
+            if (ModelState.IsValid) 
+            {
+                try
+                {
+                    var timezone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+
+                    var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+
+                    var ResultTripsOfSearch = context.trips.Where
+                        (t => t.DateOfTrip == searchDto.DateOfTrip && t.FromCity == searchDto.FromCity && t.ToCity == searchDto.ToCity)
+                        .Join(context.UserMasters, t => t.DriverId, u => u.UserID, (tr, us) => new 
+                        {
+
+
+                            DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip),
+                            DriverId = tr.DriverId,
+                            FromCity = tr.FromCity,
+                            ID = tr.ID,
+                            PlaceToMeet = tr.PlaceToMeet,
+                            TimeOfTrip = tr.TimeOfTrip,
+                            ToCity = tr.ToCity,
+                            Name = (us.FullName == null) ? us.UserName : us.FullName,
+                            ImageUrl = us.ImageUrl,
+                            PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+                        (tr.TimeOfPost.Value.Hour == date.Hour ?
+                        new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
+                        new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
+
+                        }).ToList();
+                    if (ResultTripsOfSearch == null)
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
+                    return Request.CreateResponse(HttpStatusCode.OK, ResultTripsOfSearch);
+
+
+                }
+                catch (Exception ex)
+                {
+
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                }
+                
+            }
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you have to fill required fields");
+        }
 
         [HttpGet]
         [ActionName("UserInfoToAccessProfile")]
@@ -48,9 +95,8 @@ namespace SekkaWahda.Controllers
                 
                 var timezone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
                 
-                var dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
-                var date = dateTime;    
-
+                var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+                
 
                 var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
@@ -68,7 +114,7 @@ namespace SekkaWahda.Controllers
                         (tr.TimeOfPost.Value.Hour == date.Hour ?
                         new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
                         new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value,date ).Value, unit = "hours" }) :
-                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" },
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
                       
                     }).ToList();
                 //var tripsAllTrips = context.trips.ToList();
@@ -165,10 +211,10 @@ namespace SekkaWahda.Controllers
         }
         [HttpPost]
         [ActionName("PostTrip")]
-        public HttpResponseMessage PostTrip([FromBody]trip NewTrip)
+        public HttpResponseMessage PostTrip([FromBody]TripDTO NewTrip)
         {
             var CurrentUser = context.UserMasters.Where(u => u.UserName == RequestContext.Principal.Identity.Name).FirstOrDefault();
-            if (CurrentUser.DriverLicense != null && (CurrentUser.Cars!=null||CurrentUser.Cars.Count>0))
+            if (CurrentUser.DriverLicense != null && (CurrentUser.Cars!=null)&&CurrentUser.Cars.Count>0)
             {
 
                 if (ModelState.IsValid)
@@ -176,8 +222,22 @@ namespace SekkaWahda.Controllers
 
                     try
                     {
-                        NewTrip.DriverId = CurrentUser.UserID;
-                        context.trips.Add(NewTrip);
+                        var TripToAdd = new trip()
+                        {
+                            DateOfTrip = NewTrip.DateOfTrip,
+                            DriverId = CurrentUser.UserID,
+                            FromCity = NewTrip.FromCity,
+                            PlaceToMeet = NewTrip.PlaceToMeet,
+                            TimeOfPost = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time")),
+                            TimeOfTrip = NewTrip.TimeOfTrip,
+                            ToCity = NewTrip.ToCity,
+
+                        };
+                        
+                        
+                        context.trips.Add(TripToAdd);
+                        
+
                         context.SaveChanges();
 
                         return Request.CreateResponse(HttpStatusCode.Created, "Trip was successfully Added");
@@ -192,7 +252,7 @@ namespace SekkaWahda.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.BadRequest, NewTrip);
             }
-           try{ var message= Request.CreateResponse(HttpStatusCode.BadRequest, "You should enter your car License and your driving License");
+           try{ var message= Request.CreateResponse(HttpStatusCode.BadRequest, "You should enter your car details and your driving License");
             
 
             message.Headers.Location = new Uri("https://seka.azurewebsites.net/" + "/api/HomePage/AddLicense/");
@@ -272,13 +332,22 @@ catch (Exception ex)
 
                 }
                 OldTrip.DateOfTrip = UpdatedTrip.DateOfTrip;
-                OldTrip.DriverId = UpdatedTrip.DriverId;
+                
                 OldTrip.FromCity = UpdatedTrip.FromCity;
                 OldTrip.PlaceToMeet = UpdatedTrip.PlaceToMeet;
                 OldTrip.TimeOfTrip = UpdatedTrip.TimeOfTrip;
                 OldTrip.ToCity = UpdatedTrip.ToCity;
                 try
                 {
+                    context.notification_.Add(new notification_
+                    {
+                        RaiserID = OldTrip.DriverId,
+                        ReceiverID = context.Reservations.FirstOrDefault(r=>r.TripId==OldTrip.ID).TravellerId,
+                        Message_ = "Your reservation was Updated because the car owner Updated the trip details," +
+                        " you can go to the trip post and see the new details ",
+                        TypeOfNotification = "TripUpdated"
+
+                    });
                     context.SaveChanges();
                 }
                 catch (Exception ex) {
@@ -301,7 +370,19 @@ catch (Exception ex)
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "You are unauthorized to delete this trip");
 
                 }
+                
+                var DeletedReservation= context.Reservations.Remove(context.Reservations.FirstOrDefault(r=>r.TripId== TriptoDelet.ID));
+                
                 context.trips.Remove(TriptoDelet);
+                context.notification_.Add(new notification_
+                {
+                    RaiserID = TriptoDelet.DriverId,
+                    ReceiverID = DeletedReservation.TravellerId,
+                    Message_ = "Unfortunately Your reservation was canceled because the car owner deleted the trip , you can go to home page and find another trip ",
+                    TypeOfNotification = "TripDeleted"
+
+                }) ;
+
                 context.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Deleted sucessfully");
             }

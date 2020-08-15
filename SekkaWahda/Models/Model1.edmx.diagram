@@ -14,6 +14,8 @@
         <AssociationConnector Association="SECURITY_DBModel.FK__Car__UserId__48CFD27E" />
         <EntityTypeShape EntityType="SECURITY_DBModel.Rating" Width="1.5" PointX="3" PointY="8" />
         <AssociationConnector Association="SECURITY_DBModel.FK__Rating__Travelle__619B8048" />
+        <EntityTypeShape EntityType="SECURITY_DBModel.notification_" Width="1.5" PointX="3" PointY="11.25" />
+        <AssociationConnector Association="SECURITY_DBModel.FK__notificat__Recei__6E01572D" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

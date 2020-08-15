@@ -42,6 +42,8 @@ public partial class SECURITY_DBEntities : DbContext
 
     public virtual DbSet<Rating> Ratings { get; set; }
 
+    public virtual DbSet<notification_> notification_ { get; set; }
+
 }
 
 }

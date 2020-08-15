@@ -24,8 +24,18 @@ namespace SekkaWahda.Controllers
             
             try {
                 context.Reservations.Add(reservation);
+                context.notification_.Add(new notification_ 
+                {Message_= "you requested to reserve this trip, please send 10.LE to this vodafone cash 01012345678 " +
+                "and you will be notified when your request be accepted",
+                RaiserID=context.trips.FirstOrDefault(t=>t.ID==reservation.TripId).DriverId,
+                ReceiverID=reservation.TravellerId,
+                TypeOfNotification="RequestReserveTrip"
+
+                });
+
                 context.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK,"Completed successfully");
+
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
