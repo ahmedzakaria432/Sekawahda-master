@@ -136,6 +136,14 @@ namespace SekkaWahda.Controllers
                 if (HttpContext.Current.Request.Form["UserEmailID"] != null && HttpContext.Current.Request.Form["UserEmailID"] != string.Empty)
                 { currentUser.UserEmailID = HttpContext.Current.Request.Form["UserEmailID"]; }
 
+                if (currentUser.DriverLicense == null || currentUser.DriverLicense == string.Empty)
+                {
+                    if (HttpContext.Current.Request.Form["DriverLicense"] != null && HttpContext.Current.Request.Form["DriverLicense"] != string.Empty)
+                    { currentUser.DriverLicense = HttpContext.Current.Request.Form["DriverLicense"]; }
+
+
+                }
+
 
                 Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                 if (car == null)
