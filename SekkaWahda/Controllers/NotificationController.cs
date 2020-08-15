@@ -13,7 +13,7 @@ namespace SekkaWahda.Controllers
     {
         SECURITY_DBEntities context = new SECURITY_DBEntities();
 
-        public HttpResponseMessage GetNotifications()
+     /*   public HttpResponseMessage GetNotifications()
         { var list = new List<object>();
 
             var notifications = context.notification_.Where(n => n.ReceiverID == context.UserMasters
@@ -49,6 +49,6 @@ namespace SekkaWahda.Controllers
             }
 
         }
-
+*/
     }
 }
