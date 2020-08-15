@@ -136,7 +136,6 @@ namespace SekkaWahda.Controllers
                 if (HttpContext.Current.Request.Form["UserEmailID"] != null && HttpContext.Current.Request.Form["UserEmailID"] != string.Empty)
                 { currentUser.UserEmailID = HttpContext.Current.Request.Form["UserEmailID"]; }
 
-                context.SaveChanges();
 
                 Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                 if (car == null)
