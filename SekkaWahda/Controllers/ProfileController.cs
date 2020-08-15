@@ -141,13 +141,11 @@ namespace SekkaWahda.Controllers
                 Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                 if (car == null)
                 {
-                    if ( HttpContext.Current.Request.Form["CarLicense"] == string.Empty)
-                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you must enter your car license for first time");
+                    
 
 
-                    car = new Car() { UserId = currentUser.UserID, CarLicense = HttpContext.Current.Request.Form["CarLicense"] };
+                    car = new Car() { UserId = currentUser.UserID };
                     context.Cars.Add(car);
-
 
                 }
                 var tset = HttpContext.Current.Request.Form["carColor"];
@@ -155,9 +153,13 @@ namespace SekkaWahda.Controllers
                 { car.carColor = HttpContext.Current.Request.Form["carColor"]; }
                 if (HttpContext.Current.Request.Form["CarModel"] != null && HttpContext.Current.Request.Form["CarModel"] != string.Empty)
                 { car.CarModel = HttpContext.Current.Request.Form["CarModel"]; }
+                if (HttpContext.Current.Request.Form["CarLicense"] != null && HttpContext.Current.Request.Form["CarModel"] != string.Empty)
+                { car.CarLicense = HttpContext.Current.Request.Form["CarLicense"]; }
 
-                    
-                    foreach (string file in files)
+
+
+
+                foreach (string file in files)
                     {
                         var PostedImage = files[file];
                         var fileNameWithExtension= PostedImage.FileName.NoRepeateInFileName(RequestContext.Principal.Identity.Name);
