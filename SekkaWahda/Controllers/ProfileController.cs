@@ -141,7 +141,7 @@ namespace SekkaWahda.Controllers
                 Car car = context.Cars.FirstOrDefault(c => c.UserId == currentUser.UserID);
                 if (car == null)
                 {
-                    if (HttpContext.Current.Request.Form["CarLicense"] == null || HttpContext.Current.Request.Form["CarLicense"] == string.Empty)
+                    if ( HttpContext.Current.Request.Form["CarLicense"] == string.Empty)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "you must enter your car license for first time");
 
 
