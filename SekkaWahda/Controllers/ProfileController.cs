@@ -143,7 +143,7 @@ namespace SekkaWahda.Controllers
                     
 
 
-                    car = new Car() { UserId = currentUser.UserID };
+                    car = new Car() { UserId = currentUser.UserID,CarLicense="" };
                     context.Cars.Add(car);
 
                 }
