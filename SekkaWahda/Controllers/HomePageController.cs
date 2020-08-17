@@ -51,7 +51,7 @@ namespace SekkaWahda.Controllers
                     if (ResultTripsOfSearch == null)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
                     var tripssToReturn = ResultTripsOfSearch.Select(t => new {
-                        DateOfTrip = DbFunctions.TruncateTime(t.DateOfTrip).Value.Date,
+                        DateOfTrip = t.DateOfTrip.Date,
                         DriverId = t.DriverId,
                         FromCity = t.FromCity,
                         ID = t.ID,
@@ -61,7 +61,7 @@ namespace SekkaWahda.Controllers
                         Name = t.Name,
                         ImageUrl = t.ImageUrl,
                         PostTime = t.PostTime
-                    });
+                    }).ToList();
                     return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
 
 
@@ -143,8 +143,12 @@ namespace SekkaWahda.Controllers
 
 
                 //}).ToList();
-               var tripssToReturn= tripss.Select(t => new {
-                    DateOfTrip = DbFunctions.TruncateTime(t.DateOfTrip).Value.Date,
+                if (tripss == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "There is no trips");
+                }
+                var tripssToReturn= tripss.Select(t => new {
+                    DateOfTrip = t.DateOfTrip.Date,
                     DriverId = t.DriverId,
                     FromCity = t.FromCity,
                     ID = t.ID,
@@ -154,11 +158,8 @@ namespace SekkaWahda.Controllers
                     Name = t.Name,
                     ImageUrl = t.ImageUrl,
                     PostTime = t.PostTime
-                });
-                if (tripss == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "There is no trips");
-                }
+                }).ToList();
+                
 
                 return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
             }
