@@ -27,7 +27,7 @@ namespace SekkaWahda.Controllers
                     var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
 
                     var ResultTripsOfSearch = context.trips.Where
-                        (t => t.DateOfTrip == searchDto.DateOfTrip && t.FromCity == searchDto.FromCity && t.ToCity == searchDto.ToCity)
+                        (t => DbFunctions.TruncateTime(t.DateOfTrip) == DbFunctions.TruncateTime(searchDto.DateOfTrip) && t.FromCity == searchDto.FromCity && t.ToCity == searchDto.ToCity)
                         .Join(context.UserMasters, t => t.DriverId, u => u.UserID, (tr, us) => new 
                         {
 
@@ -101,7 +101,7 @@ namespace SekkaWahda.Controllers
                 var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
                     {
-                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip),
+                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value.ToString().Substring(0, tr.DateOfTrip.ToString().IndexOf('T') + 1),
                         DriverId = tr.DriverId,
                         FromCity = tr.FromCity,
                         ID = tr.ID,
@@ -116,7 +116,7 @@ namespace SekkaWahda.Controllers
                         new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value,date ).Value, unit = "hours" }) :
                         new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
                       
-                    }).ToList();
+                    }).OrderByDescending(p=>p.ID).ToList();
                 //var tripsAllTrips = context.trips.ToList();
                 //var trips = context.trips.ToList().Select(tr => new
                 //{
