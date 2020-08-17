@@ -76,7 +76,9 @@ namespace SekkaWahda.Controllers
                         CarModel = car.CarModel,
                         city = User.city,
                         FullName = User.FullName,
-                        UserName = User.UserName
+                        UserName = User.UserName,
+                        User.ImageUrl
+
 
 
                     };
@@ -87,6 +89,7 @@ namespace SekkaWahda.Controllers
                 {
                     var ProfileAccebted = new
                     {
+                        User.ImageUrl,
                         carColor = car.carColor,
                         CarImageUrl = car.CarImageRelativeUrl,
                         CarLicense = car.CarLicense,
