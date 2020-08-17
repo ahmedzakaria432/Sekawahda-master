@@ -32,7 +32,7 @@ namespace SekkaWahda.Controllers
                         {
 
 
-                            DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip),
+                            DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value.ToString().Substring(0, tr.DateOfTrip.ToString().IndexOf('T')+1),
                             DriverId = tr.DriverId,
                             FromCity = tr.FromCity,
                             ID = tr.ID,

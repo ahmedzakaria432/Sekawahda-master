@@ -13,42 +13,60 @@ namespace SekkaWahda.Controllers
     {
         SECURITY_DBEntities context = new SECURITY_DBEntities();
 
-     /*   public HttpResponseMessage GetNotifications()
-        { var list = new List<object>();
-
-            var notifications = context.notification_.Where(n => n.ReceiverID == context.UserMasters
-            .FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name).UserID).ToList();
-            foreach (var notification in notifications)
+   public HttpResponseMessage GetNotifications()
+        {
+            try
             {
-                switch (notification.TypeOfNotification)
+                var ListOfNotifications = new List<object>();
+
+                var notifications = context.notification_.Where(n => n.ReceiverID == context.UserMasters
+                .FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name).UserID).ToList();
+                foreach (var notification in notifications)
                 {
-                    case "RequestReserveTrip":
-                        list.Add(new {notification.Message_,
-                            context.UserMasters.FirstOrDefault(u=>u.UserID==notification.RaiserID).ImageUrl,
-                            context.trips.FirstOrDefault(t=>t.DriverId==notification.RaiserID).ID
-                        });
-                        break;
-                    case "TripUpdated":
-                        list.Add(new 
-                        {
-                            notification.Message_,
-                            context.UserMasters.FirstOrDefault(u => u.UserID == notification.RaiserID).ImageUrl,
-                            context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                    switch (notification.TypeOfNotification)
+                    {
+                        case "RequestReserveTrip":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                            });
+                            break;
+                        case "TripUpdated":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
 
-                        });
+                            });
 
-                        break;
+                            break;
 
-                    case "TripDeleted":
-                        list.Add
-                        break;
-
-                    default:
-                        break;
+                        case "TripDeleted":
+                            ListOfNotifications.Add(new { notification.Message_, notification.TypeOfNotification });
+                            break;
+                        case "TripReserved":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                            });
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                return Request.CreateResponse(HttpStatusCode.OK, ListOfNotifications);
             }
+            catch (Exception ex) 
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
 
+            }
         }
-*/
+
     }
 }
