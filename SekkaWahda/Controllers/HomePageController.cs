@@ -62,7 +62,7 @@ namespace SekkaWahda.Controllers
                         ImageUrl = t.ImageUrl,
                         PostTime = t.PostTime
                     }).ToList();*/
-                    return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
+                    return Request.CreateResponse(HttpStatusCode.OK, ResultTripsOfSearch);
 
 
                 }
@@ -161,7 +161,7 @@ namespace SekkaWahda.Controllers
                 }).ToList();*/
                 
 
-                return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
+                return Request.CreateResponse(HttpStatusCode.OK, tripss);
             }
             catch (Exception ex)
             {
