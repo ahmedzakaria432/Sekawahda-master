@@ -77,7 +77,8 @@ namespace SekkaWahda.Controllers
                         city = User.city,
                         FullName = User.FullName,
                         UserName = User.UserName,
-                        User.ImageUrl
+                        User.ImageUrl,
+                        TypeOfProfile = "ProfileNotReserved"
 
 
 
@@ -100,8 +101,8 @@ namespace SekkaWahda.Controllers
                         PhoneNumber = User.PhoneNumber,
                         SSN = User.SSN,
                         UserEmailID = User.UserEmailID,
-                        DriverTotalRate = User.DriverTotalRate
-
+                        DriverTotalRate = User.DriverTotalRate,
+                        TypeOfProfile= "ProfileReserved"
 
                     };
                     return Request.CreateResponse(HttpStatusCode.OK, ProfileAccebted);

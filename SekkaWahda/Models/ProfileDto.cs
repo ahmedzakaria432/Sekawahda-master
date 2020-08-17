@@ -35,7 +35,7 @@ namespace SekkaWahda.Models
         
         public string CarImageUrl { get; set; }
         public Nullable<decimal> DriverTotalRate { get; set; }
-
+        public string TypeOfProfile = "UserProfile";
 
 
 
