@@ -32,7 +32,7 @@ namespace SekkaWahda.Controllers
                         {
 
 
-                            DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value.ToString().Substring(0, tr.DateOfTrip.ToString().IndexOf('T')+1),
+                            DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
                             DriverId = tr.DriverId,
                             FromCity = tr.FromCity,
                             ID = tr.ID,
@@ -50,7 +50,19 @@ namespace SekkaWahda.Controllers
                         }).ToList();
                     if (ResultTripsOfSearch == null)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
-                    return Request.CreateResponse(HttpStatusCode.OK, ResultTripsOfSearch);
+                    var tripssToReturn = ResultTripsOfSearch.Select(t => new {
+                        DateOfTrip = DbFunctions.TruncateTime(t.DateOfTrip).Value.Date,
+                        DriverId = t.DriverId,
+                        FromCity = t.FromCity,
+                        ID = t.ID,
+                        PlaceToMeet = t.PlaceToMeet,
+                        TimeOfTrip = t.TimeOfTrip,
+                        ToCity = t.ToCity,
+                        Name = t.Name,
+                        ImageUrl = t.ImageUrl,
+                        PostTime = t.PostTime
+                    });
+                    return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
 
 
                 }
@@ -101,7 +113,7 @@ namespace SekkaWahda.Controllers
                 var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
                     {
-                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value.ToString().Substring(0, tr.DateOfTrip.ToString().IndexOf('T') + 1),
+                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
                         DriverId = tr.DriverId,
                         FromCity = tr.FromCity,
                         ID = tr.ID,
@@ -131,12 +143,24 @@ namespace SekkaWahda.Controllers
 
 
                 //}).ToList();
+               var tripssToReturn= tripss.Select(t => new {
+                    DateOfTrip = DbFunctions.TruncateTime(t.DateOfTrip).Value.Date,
+                    DriverId = t.DriverId,
+                    FromCity = t.FromCity,
+                    ID = t.ID,
+                    PlaceToMeet = t.PlaceToMeet,
+                    TimeOfTrip = t.TimeOfTrip,
+                    ToCity = t.ToCity,
+                    Name = t.Name,
+                    ImageUrl = t.ImageUrl,
+                    PostTime = t.PostTime
+                });
                 if (tripss == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "There is no trips");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, tripss);
+                return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
             }
             catch (Exception ex)
             {
