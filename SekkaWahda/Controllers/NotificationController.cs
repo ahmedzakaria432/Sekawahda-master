@@ -38,7 +38,7 @@ namespace SekkaWahda.Controllers
                             {
                                 notification.Message_,
                                 notification.TypeOfNotification,
-                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                                TripID=context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
 
                             });
 
@@ -52,7 +52,7 @@ namespace SekkaWahda.Controllers
                             {
                                 notification.Message_,
                                 notification.TypeOfNotification,
-                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                                TripID=context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
                             });
                             break;
                         case "ReserveAccepredDriver":
@@ -69,7 +69,7 @@ namespace SekkaWahda.Controllers
                                 notification.Message_,
                                 notification.TypeOfNotification,
                                 
-                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                                TripID=context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
                             });
                             break;
                         
