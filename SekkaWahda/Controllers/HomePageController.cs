@@ -112,7 +112,7 @@ namespace SekkaWahda.Controllers
                
                     var ReservedTrips = context.trips.Where(t => t.ID == context.Reservations
                     .FirstOrDefault(r => r.TravellerId == context.UserMasters.FirstOrDefault(u=>u.UserName==(RequestContext.Principal.Identity.Name)).UserID)
-                    .TripId).Join(context.UserMasters, t => t.DriverId, u => u.UserID,
+                    .TripId&& DbFunctions.TruncateTime(date )< DbFunctions.TruncateTime(t.DateOfTrip)).Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
                     {
                         DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
@@ -122,6 +122,9 @@ namespace SekkaWahda.Controllers
                         PlaceToMeet = tr.PlaceToMeet,
                         TimeOfTrip = tr.TimeOfTrip,
                         ToCity = tr.ToCity,
+                        Accebted=context.Reservations.FirstOrDefault(r=>r.TripId==tr.ID).Accebted.Value==true?
+                        "not yet Accepted reservation": "Accepted reservation"
+                        ,
                         Name = (us.FullName == null) ? us.UserName : us.FullName,
                         ImageUrl = us.ImageUrl,
                         PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
@@ -131,12 +134,29 @@ namespace SekkaWahda.Controllers
                         new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
 
                     }).OrderByDescending(p => p.ID).ToList();
+                if (ReservedTrips == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "there is no Reserved trips");
+                }
+               var tripssToReturn = ReservedTrips.Select(t => new {
+                        DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
+                        DriverId = t.DriverId,
+                        FromCity = t.FromCity,
+                        ID = t.ID,
+                        PlaceToMeet = t.PlaceToMeet,
+                        TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                        ToCity = t.ToCity,
+                        Name = t.Name,
+                        ImageUrl = t.ImageUrl,
+                        PostTime = t.PostTime
+                    }).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                
             }
         }
 
