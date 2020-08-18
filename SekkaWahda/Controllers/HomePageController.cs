@@ -97,7 +97,49 @@ namespace SekkaWahda.Controllers
 
             }
         }
-        
+
+        [HttpGet]
+        [ActionName("GetMyReservedTrips")]
+        public HttpResponseMessage GetMyReservedTrips()
+        {
+            try
+            {
+
+                var timezone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+
+                var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+
+               
+                    var ReservedTrips = context.trips.Where(t => t.ID == context.Reservations
+                    .FirstOrDefault(r => r.TravellerId == context.UserMasters.FirstOrDefault(u=>u.UserName==(RequestContext.Principal.Identity.Name)).UserID)
+                    .TripId).Join(context.UserMasters, t => t.DriverId, u => u.UserID,
+                    (tr, us) => new
+                    {
+                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
+                        DriverId = tr.DriverId,
+                        FromCity = tr.FromCity,
+                        ID = tr.ID,
+                        PlaceToMeet = tr.PlaceToMeet,
+                        TimeOfTrip = tr.TimeOfTrip,
+                        ToCity = tr.ToCity,
+                        Name = (us.FullName == null) ? us.UserName : us.FullName,
+                        ImageUrl = us.ImageUrl,
+                        PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+                        (tr.TimeOfPost.Value.Hour == date.Hour ?
+                        new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
+                        new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
+
+                    }).OrderByDescending(p => p.ID).ToList();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         [HttpGet]
         [ActionName("GetAllTrips")]
         public HttpResponseMessage GetAllTrips()

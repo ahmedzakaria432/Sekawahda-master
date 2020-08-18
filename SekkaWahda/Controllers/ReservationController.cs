@@ -35,7 +35,7 @@ namespace SekkaWahda.Controllers
 
                 context.SaveChanges();
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK,"your request have been sent");
             }
             catch (Exception ex)
             {
