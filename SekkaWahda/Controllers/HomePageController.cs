@@ -109,40 +109,78 @@ namespace SekkaWahda.Controllers
 
                 var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
 
-               
-                    var ReservedTrips = context.trips.Where(t => t.ID == context.Reservations
-                    .FirstOrDefault(r => r.TravellerId == context.UserMasters.FirstOrDefault(u=>u.UserName==(RequestContext.Principal.Identity.Name)).UserID)
-                    .TripId&& DbFunctions.TruncateTime(date )< DbFunctions.TruncateTime(t.DateOfTrip)).Join(context.UserMasters, t => t.DriverId, u => u.UserID,
-                    (tr, us) => new
-                    {
-                        DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
-                        DriverId = tr.DriverId,
-                        FromCity = tr.FromCity,
-                        ID = tr.ID,
-                        PlaceToMeet = tr.PlaceToMeet,
-                        TimeOfTrip = tr.TimeOfTrip,
-                        ToCity = tr.ToCity,
-                        Accebted=context.Reservations.FirstOrDefault(r=>r.TripId==tr.ID).Accebted.Value==true?
-                        "not yet Accepted reservation": "Accepted reservation"
-                        ,
-                        Name = (us.FullName == null) ? us.UserName : us.FullName,
-                        ImageUrl = us.ImageUrl,
-                        PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+
+                var currentUserID = context.UserMasters.FirstOrDefault(u => u.UserName == (RequestContext.Principal.Identity.Name)).UserID;
+
+
+                var ReservedTripsOfCurrentUser = context.trips
+                      .Join(context.Reservations, t => t.ID, r => r.TripId, (tr, re)=>new {
+                          DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
+                          DriverId = tr.DriverId,
+                          FromCity = tr.FromCity,
+                          TripID = tr.ID,
+                          PlaceToMeet = tr.PlaceToMeet,
+                          TimeOfTrip = tr.TimeOfTrip,
+                          ToCity = tr.ToCity,
+                          PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
                         (tr.TimeOfPost.Value.Hour == date.Hour ?
                         new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
                         new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
-                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" },
+                        re.TravellerId,
+                        re.Accebted
+                        
 
-                    }).OrderByDescending(p => p.ID).ToList();
-                if (ReservedTrips == null)
+                      }).Where(t=>DbFunctions.TruncateTime(date) < DbFunctions.TruncateTime(t.DateOfTrip)&&currentUserID==t.TravellerId)
+                      .Join(context.UserMasters,t=>t.DriverId,u=>u.UserID,(tr,us)=>new
+                      {
+
+                          DateOfTrip = tr.DateOfTrip,
+                          DriverId = tr.DriverId,
+                          FromCity = tr.FromCity,
+                          TripID = tr.TripID,
+                          PlaceToMeet = tr.PlaceToMeet,
+                          TimeOfTrip = tr.TimeOfTrip,
+                          ToCity = tr.ToCity,
+                          PostTime = tr.PostTime,
+                          tr.TravellerId,
+                          Accebted= tr.Accebted == true ?
+                        "Accepted reservation" : "reservation not yet Accepted ",
+                        Name = (us.FullName == null) ? us.UserName : us.FullName,
+                          ImageUrl = us.ImageUrl
+                      }).OrderByDescending(p => p.TripID).ToList(); 
+                      
+                    //var ReservedTrips = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
+                    //(tr, us) => new
+                    //{
+                    //    DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
+                    //    DriverId = tr.DriverId,
+                    //    FromCity = tr.FromCity,
+                    //    ID = tr.ID,
+                    //    PlaceToMeet = tr.PlaceToMeet,
+                    //    TimeOfTrip = tr.TimeOfTrip,
+                    //    ToCity = tr.ToCity,
+                    //    Accebted=context.Reservations.FirstOrDefault(r=>r.TripId==tr.ID).Accebted.Value==true?
+                    //    "Accepted reservation": "reservation not yet Accepted "
+                    //    ,
+                    //    Name = (us.FullName == null) ? us.UserName : us.FullName,
+                    //    ImageUrl = us.ImageUrl,
+                    //    PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+                    //    (tr.TimeOfPost.Value.Hour == date.Hour ?
+                    //    new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
+                    //    new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
+                    //    new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
+
+                    //}) .OrderByDescending(p => p.ID).ToList();
+                if (ReservedTripsOfCurrentUser == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "there is no Reserved trips");
                 }
-               var tripssToReturn = ReservedTrips.Select(t => new {
+               var tripssToReturn = ReservedTripsOfCurrentUser.Select(t => new {
                         DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
                         DriverId = t.DriverId,
                         FromCity = t.FromCity,
-                        ID = t.ID,
+                        ID = t.TripID,
                         PlaceToMeet = t.PlaceToMeet,
                         TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
                         t.Accebted,
