@@ -30,7 +30,7 @@ namespace SekkaWahda.Controllers
                             {
                                 notification.Message_,
                                 notification.TypeOfNotification,
-                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                                TripID=context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
                             });
                             break;
                         case "TripUpdated":
