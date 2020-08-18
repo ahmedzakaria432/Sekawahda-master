@@ -55,17 +55,31 @@ namespace SekkaWahda.Controllers
                         Join(context.Reservations,t=>t.ID,r=>r.TripId,(t,r)=>
                             new
                             {
-                                DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
+                                DateOfTrip = t.DateOfTrip,
                                 DriverId = t.DriverId,
                                 FromCity = t.FromCity,
                                 ID = t.ID,
                                 PlaceToMeet = t.PlaceToMeet,
-                                TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                                TimeOfTrip = t.TimeOfTrip,
                                 ToCity = t.ToCity,
                                 Name = t.Name,
                                 ImageUrl = t.ImageUrl,
                                 PostTime = t.PostTime
                             });
+                    var triptoreturn = tripssToReturn.Select(t => new
+                    {
+                        DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
+                        DriverId = t.DriverId,
+                        FromCity = t.FromCity,
+                        ID = t.ID,
+                        PlaceToMeet = t.PlaceToMeet,
+                        TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                        ToCity = t.ToCity,
+                        Name = t.Name,
+                        ImageUrl = t.ImageUrl,
+                        PostTime = t.PostTime
+
+                    });
                     List<object> listToRet = new List<object>();
                     bool found=false;
                     object ObjToAdd;
@@ -83,7 +97,7 @@ namespace SekkaWahda.Controllers
                             listToRet.Add(ResultTripsOfSearch.ElementAt(i));
 
                     }
-
+                    
                  
                         return Request.CreateResponse(HttpStatusCode.OK, listToRet);
 
