@@ -145,6 +145,7 @@ namespace SekkaWahda.Controllers
                         ID = t.ID,
                         PlaceToMeet = t.PlaceToMeet,
                         TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                        t.Accebted,
                         ToCity = t.ToCity,
                         Name = t.Name,
                         ImageUrl = t.ImageUrl,
