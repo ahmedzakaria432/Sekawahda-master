@@ -110,7 +110,7 @@ namespace SekkaWahda.Controllers
                 var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
                 
 
-                var tripss = context.trips.Join(context.UserMasters, t => t.DriverId, u => u.UserID,
+                var tripss = context.trips.Where(t=>t.ID!=context.Reservations.FirstOrDefault(r=>r.TripId==t.ID).TripId).Join(context.UserMasters, t => t.DriverId, u => u.UserID,
                     (tr, us) => new
                     {
                         DateOfTrip = DbFunctions.TruncateTime(tr.DateOfTrip).Value,
