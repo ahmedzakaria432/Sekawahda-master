@@ -47,8 +47,11 @@ namespace SekkaWahda.Controllers
         [HttpDelete]
 
         [ActionName("CancelReservation")]
-        public HttpResponseMessage CancelReservation(int ReservationID)
+        public HttpResponseMessage CancelReservation(int TripID)
         {
+            var ReservationID =context.Reservations.FirstOrDefault(r=>r.TripId==TripID).ID;
+            if (ReservationID==default(int))
+                return Request.CreateResponse(HttpStatusCode.OK, "Reservation was not found");
             var CurrentUserID = context.UserMasters.FirstOrDefault(u => u.UserName == RequestContext.Principal.Identity.Name).UserID;
             if (CurrentUserID != context.Reservations.FirstOrDefault(r => r.ID == ReservationID).TravellerId)
             {

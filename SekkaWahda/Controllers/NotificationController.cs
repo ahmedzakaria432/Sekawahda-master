@@ -55,6 +55,32 @@ namespace SekkaWahda.Controllers
                                 context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
                             });
                             break;
+                        case "ReserveAccepredDriver":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+                                notification.RaiserID
+                            });
+                            break;
+                        case "reserveAcceptedTraveller":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+                                
+                                context.trips.FirstOrDefault(t => t.DriverId == notification.RaiserID).ID
+                            });
+                            break;
+                        
+                        case "ReserveNotAccepted":
+                            ListOfNotifications.Add(new
+                            {
+                                notification.Message_,
+                                notification.TypeOfNotification,
+
+                            });
+                            break;
                         default:
                             break;
                     }
