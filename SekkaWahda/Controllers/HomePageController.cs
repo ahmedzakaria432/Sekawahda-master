@@ -47,22 +47,45 @@ namespace SekkaWahda.Controllers
                         new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
                         new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
 
-                        }).ToList();
+                        });
+
                     if (ResultTripsOfSearch == null)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
-                    var tripssToReturn = ResultTripsOfSearch.Select(t => new {
-                        DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
-                        DriverId = t.DriverId,
-                        FromCity = t.FromCity,
-                        ID = t.ID,
-                        PlaceToMeet = t.PlaceToMeet,
-                        TimeOfTrip = t.TimeOfTrip.Hours+":"+t.TimeOfTrip.Minutes,
-                        ToCity = t.ToCity,
-                        Name = t.Name,
-                        ImageUrl = t.ImageUrl,
-                        PostTime = t.PostTime
-                    }).ToList();
-                    return Request.CreateResponse(HttpStatusCode.OK, tripssToReturn);
+                    var tripssToReturn = ResultTripsOfSearch.
+                        Join(context.Reservations,t=>t.ID,r=>r.TripId,(t,r)=>
+                            new
+                            {
+                                DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
+                                DriverId = t.DriverId,
+                                FromCity = t.FromCity,
+                                ID = t.ID,
+                                PlaceToMeet = t.PlaceToMeet,
+                                TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                                ToCity = t.ToCity,
+                                Name = t.Name,
+                                ImageUrl = t.ImageUrl,
+                                PostTime = t.PostTime
+                            });
+                    List<object> listToRet = new List<object>();
+                    bool found=false;
+                    object ObjToAdd;
+                    for (int i = 0; i < ResultTripsOfSearch.Count(); i++)
+                    {
+                        for (int j= 0; j < tripssToReturn.Count(); j++)
+                        {
+                            if (ResultTripsOfSearch.ElementAt(i).ID == tripssToReturn.ElementAt(j).ID)
+                            {
+                                found = true;
+                              
+                            }
+                        }
+                        if (!found)
+                            listToRet.Add(ResultTripsOfSearch.ElementAt(i));
+
+                    }
+
+                 
+                        return Request.CreateResponse(HttpStatusCode.OK, listToRet);
 
 
                 }
