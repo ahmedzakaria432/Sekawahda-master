@@ -47,7 +47,7 @@ namespace SekkaWahda.Controllers
                         new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
                         new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
 
-                        });
+                        }).ToList();
 
                     if (ResultTripsOfSearch == null)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
@@ -65,7 +65,7 @@ namespace SekkaWahda.Controllers
                                 Name = t.Name,
                                 ImageUrl = t.ImageUrl,
                                 PostTime = t.PostTime
-                            });
+                            }).ToList();
                     var triptoreturn = tripssToReturn.Select(t => new
                     {
                         DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
@@ -95,7 +95,7 @@ namespace SekkaWahda.Controllers
                         }
                         if (!found)
                             listToRet.Add(ResultTripsOfSearch.ElementAt(i));
-
+                        found = false;
                     }
                     
                  
@@ -349,22 +349,46 @@ namespace SekkaWahda.Controllers
 
             try
             {
-                var trip = context.trips.Where(t => t.ID == id).ToList().Select(tr => new {
+                var timezone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+
+                var date = TimeZoneInfo.ConvertTime(DateTime.Now, timezone);
+
+                var trip = context.trips.Where(t => t.ID == id)
+                    .Join(context.UserMasters,t=>t.DriverId,u=>u.UserID,(tr,us)=>new
+                {
                     DateOfTrip = tr.DateOfTrip,
                     DriverId = tr.DriverId,
                     FromCity = tr.FromCity,
                     ID = tr.ID,
                     PlaceToMeet = tr.PlaceToMeet,
                     TimeOfTrip = tr.TimeOfTrip,
-                    ToCity = tr.ToCity
+                    ToCity = tr.ToCity,
+                        Name = (us.FullName == null) ? us.UserName : us.FullName,
+                        ImageUrl = us.ImageUrl,
+                        PostTime = (DbFunctions.TruncateTime(tr.TimeOfPost) == DbFunctions.TruncateTime(date)) ?
+                        (tr.TimeOfPost.Value.Hour == date.Hour ?
+                        new { time = DbFunctions.DiffMinutes(tr.TimeOfPost.Value, date).Value, unit = "Minutes" } :
+                        new { time = DbFunctions.DiffHours(tr.TimeOfPost.Value, date).Value, unit = "hours" }) :
+                        new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
 
-
-                }).FirstOrDefault();
+                    }).FirstOrDefault();
                 if (trip == null) {
 
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Requested trip not found");
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, trip);
+                var tripToReturn =  new {
+                    DateOfTrip = trip.DateOfTrip.ToString("MM/dd/yyyy"),
+                    DriverId = trip.DriverId,
+                    FromCity = trip.FromCity,
+                    ID = trip.ID,
+                    PlaceToMeet = trip.PlaceToMeet,
+                    TimeOfTrip = trip.TimeOfTrip.Hours + ":" + trip.TimeOfTrip.Minutes,
+                    ToCity = trip.ToCity,
+                    Name = trip.Name,
+                    ImageUrl = trip.ImageUrl,
+                    PostTime = trip.PostTime
+                };
+                return Request.CreateResponse(HttpStatusCode.OK, tripToReturn);
             }
             catch (Exception ex) {
 
