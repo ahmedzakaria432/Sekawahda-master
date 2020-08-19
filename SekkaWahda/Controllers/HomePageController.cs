@@ -48,6 +48,20 @@ namespace SekkaWahda.Controllers
                         new { time = DbFunctions.DiffDays(tr.TimeOfPost.Value, date).Value, unit = "days" }
 
                         }).ToList();
+                    var tripsEditDate = ResultTripsOfSearch.Select(t=>new
+                    {
+                        DateOfTrip = t.DateOfTrip.ToString("MM/dd/yyyy"),
+                        DriverId = t.DriverId,
+                        FromCity = t.FromCity,
+                        ID = t.ID,
+                        PlaceToMeet = t.PlaceToMeet,
+                        TimeOfTrip = t.TimeOfTrip.Hours + ":" + t.TimeOfTrip.Minutes,
+                        ToCity = t.ToCity,
+                        Name = t.Name,
+                        ImageUrl = t.ImageUrl,
+                        PostTime = t.PostTime
+
+                    });
 
                     if (ResultTripsOfSearch == null)
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "There is no trips");
@@ -83,18 +97,18 @@ namespace SekkaWahda.Controllers
                     List<object> listToRet = new List<object>();
                     bool found=false;
                     object ObjToAdd;
-                    for (int i = 0; i < ResultTripsOfSearch.Count(); i++)
+                    for (int i = 0; i < tripsEditDate.Count(); i++)
                     {
                         for (int j= 0; j < tripssToReturn.Count(); j++)
                         {
-                            if (ResultTripsOfSearch.ElementAt(i).ID == tripssToReturn.ElementAt(j).ID)
+                            if (tripsEditDate.ElementAt(i).ID == tripssToReturn.ElementAt(j).ID)
                             {
                                 found = true;
                               
                             }
                         }
                         if (!found)
-                            listToRet.Add(ResultTripsOfSearch.ElementAt(i));
+                            listToRet.Add(tripsEditDate.ElementAt(i));
                         found = false;
                     }
                     
